@@ -1,0 +1,79 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-graphite: #252526;
+  --color-background-primary: #e3e3e3;
+  --color-background-secondary: #858585;
+  --color-active-blue: #007acc;
+  --font-sans: var(--font-nunito);
+  --text-xs: 12px;
+  --text-sm: 14px;
+  --text-base: 16px;
+  --container-app: 1200px;
+  --default-transition-duration: 250ms;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  min-width: var(--container-app);
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  background: var(--color-background-primary);
+  color: var(--color-graphite);
+  font-family: var(--font-sans), sans-serif;
+  font-size: var(--text-sm);
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-active-blue);
+  outline-offset: 2px;
+}
+
+.app-shell {
+  width: var(--container-app);
+  min-height: 100vh;
+  margin-inline: auto;
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  min-height: 3rem;
+  padding-inline: 1rem;
+  border-bottom: 1px solid var(--color-graphite);
+}
+
+.app-logo {
+  font-size: var(--text-base);
+  font-weight: 700;
+}
+
+.app-workspace {
+  min-height: calc(100vh - 3rem);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
