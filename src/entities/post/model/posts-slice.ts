@@ -43,6 +43,7 @@ interface PostsState {
   loadingCursor: string | null;
   nextCursor: string | null;
   postsById: Record<string, PostViewModel>;
+  reloadToken: number;
   rootIds: string[];
   rules: PostsQueryRules;
   postsStatus: PostsRequestStatus;
@@ -58,11 +59,13 @@ interface PostsActions {
   beginLoadMore: (cursor: string) => boolean;
   replaceFeed: (generation: number, page: PostsPage) => void;
   resetFeed: () => void;
+  requestFeedReload: () => void;
   setFeedError: (
     generation: number,
     message: string,
     requestedCursor?: string,
   ) => void;
+  upsertRoot: (post: PostViewModel) => void;
 }
 
 export type PostsSlice = PostsActions & PostsState;
@@ -107,6 +110,28 @@ function appendRootIds(current: string[], items: PostViewModel[]): string[] {
   return next;
 }
 
+function compareRootPosts(
+  left: PostViewModel,
+  right: PostViewModel,
+  rules: PostsQueryRules,
+): number {
+  let comparison: number;
+
+  if (rules.sortBy === "EMAIL") {
+    comparison = (left.email ?? "").localeCompare(right.email ?? "");
+  } else if (rules.sortBy === "USER_NAME") {
+    comparison = left.userName.localeCompare(right.userName);
+  } else {
+    comparison =
+      Date.parse(String(left.publishDate ?? "")) -
+      Date.parse(String(right.publishDate ?? ""));
+    if (Number.isNaN(comparison)) comparison = 0;
+  }
+
+  if (comparison === 0) comparison = left.id.localeCompare(right.id);
+  return rules.sortDirection === "ASC" ? comparison : -comparison;
+}
+
 export const createPostsSlice: StateCreator<PostsSlice> = (set, get) => ({
   postsError: null,
   generation: 0,
@@ -114,6 +139,7 @@ export const createPostsSlice: StateCreator<PostsSlice> = (set, get) => ({
   loadingCursor: null,
   nextCursor: null,
   postsById: {},
+  reloadToken: 0,
   rootIds: [],
   rules: DEFAULT_RULES,
   postsStatus: "idle",
@@ -193,6 +219,19 @@ export const createPostsSlice: StateCreator<PostsSlice> = (set, get) => ({
       postsStatus: "idle",
     }));
   },
+  requestFeedReload: () => {
+    set((state) => ({
+      postsError: null,
+      generation: state.generation + 1,
+      hasMore: true,
+      loadingCursor: null,
+      nextCursor: null,
+      postsById: {},
+      reloadToken: state.reloadToken + 1,
+      rootIds: [],
+      postsStatus: "idle",
+    }));
+  },
   setFeedError: (generation, message, requestedCursor) => {
     const state = get();
 
@@ -209,5 +248,22 @@ export const createPostsSlice: StateCreator<PostsSlice> = (set, get) => ({
       loadingCursor: null,
       postsStatus: "error",
     });
+  },
+  upsertRoot: (post) => {
+    if (post.parentId !== null) return;
+    const state = get();
+    const postsById = { ...state.postsById, [post.id]: post };
+    const rootIds = state.rootIds.includes(post.id)
+      ? [...state.rootIds]
+      : [...state.rootIds, post.id];
+
+    rootIds.sort((leftId, rightId) => {
+      const left = postsById[leftId];
+      const right = postsById[rightId];
+      if (!left || !right) return 0;
+      return compareRootPosts(left, right, state.rules);
+    });
+
+    set({ postsById, rootIds });
   },
 });

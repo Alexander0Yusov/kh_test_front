@@ -2,19 +2,25 @@
 
 import { useEffect, useRef } from "react";
 
-import { PostCard, type PostTreeRow, type PostsRequestStatus } from "@/entities/post";
+import {
+  type AttachmentPreviewRequest,
+  PostCard,
+  type PostTreeRow,
+  type PostsRequestStatus,
+} from "@/entities/post";
 import { Button } from "@/shared/ui/button";
 
 interface PostsFeedProps {
   error: string | null;
   hasMore: boolean;
+  onAttachmentPreview: AttachmentPreviewRequest;
   onLoadMore: () => void;
   onRetry: () => void;
   rows: PostTreeRow[];
   status: PostsRequestStatus;
 }
 
-export function PostsFeed({ error, hasMore, onLoadMore, onRetry, rows, status }: PostsFeedProps) {
+export function PostsFeed({ error, hasMore, onAttachmentPreview, onLoadMore, onRetry, rows, status }: PostsFeedProps) {
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -42,7 +48,7 @@ export function PostsFeed({ error, hasMore, onLoadMore, onRetry, rows, status }:
       <div className="post-tree" role="tree">
         {rows.map(({ depth, post }) => (
           <div aria-level={depth + 1} aria-selected="false" className="post-tree-row" key={post.id} role="treeitem" style={{ marginInlineStart: `calc(${depth} * var(--post-tree-indent))` }}>
-            <PostCard post={post} />
+            <PostCard onAttachmentPreview={onAttachmentPreview} post={post} />
           </div>
         ))}
       </div>

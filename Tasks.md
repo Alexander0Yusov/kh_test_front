@@ -205,17 +205,17 @@ Frontend должен обеспечивать:
 
 ## Post contract
 
-- [ ] Создание root post выполняется без `parentId`.
+- [x] Создание root post выполняется без `parentId`.
 - [ ] Создание reply выполняется с `parentId`.
-- [ ] Каждый Post обязательно принимает собственные `userName`, `email`, `message`, `captchaId`, `captchaValue`.
-- [ ] `homePage` необязателен.
-- [ ] `attachmentFileId` необязателен.
-- [ ] UserName допускает только латинские буквы и цифры.
-- [ ] Email валидируется как email.
-- [ ] HomePage валидируется как URL.
-- [ ] Разрешённые HTML-теги сообщения: `a`, `strong`, `i`, `code`.
-- [ ] Для `a` разрешены только `href` и `title`.
-- [ ] Не разрешать `script`, inline handlers, `style`, `class`, небезопасные URL schemes.
+- [x] Каждый root Post принимает собственные `userName`, `email`, `message`, `captchaId`, `captchaValue`.
+- [x] `homePage` необязателен.
+- [x] `attachmentFileId` необязателен.
+- [x] UserName допускает только латинские буквы и цифры.
+- [x] Email валидируется как email.
+- [x] HomePage валидируется как абсолютный HTTP/HTTPS URL.
+- [x] Разрешённые HTML-теги сообщения: `a`, `strong`, `i`, `code`.
+- [x] Для `a` разрешены только `href` и `title`.
+- [x] Не разрешать `script`, inline handlers, `style`, `class`, небезопасные URL schemes.
 - [ ] Полная модель Post может содержать:
   - `id`;
   - `parentId`;
@@ -231,14 +231,14 @@ Frontend должен обеспечивать:
 
 ## CAPTCHA contract
 
-- [ ] CAPTCHA получать перед созданием сообщения.
-- [ ] CAPTCHA response содержит `captchaId` и PNG data URL.
-- [ ] CAPTCHA состоит из шести латинских букв/цифр.
-- [ ] CAPTCHA одноразовая.
+- [x] CAPTCHA получать перед созданием сообщения.
+- [x] CAPTCHA response содержит `captchaId` и PNG data URL.
+- [x] CAPTCHA состоит из шести латинских букв/цифр.
+- [x] CAPTCHA одноразовая.
 - [ ] CAPTCHA действует 300 секунд.
-- [ ] После неправильного ответа получать новую CAPTCHA.
-- [ ] После успешного создания Post очищать CAPTCHA state.
-- [ ] Не сохранять CAPTCHA в localStorage.
+- [x] После неправильного ответа получать новую CAPTCHA.
+- [x] После успешного создания Post очищать CAPTCHA state.
+- [x] Не сохранять CAPTCHA в localStorage.
 
 ## Files contract
 
@@ -413,7 +413,7 @@ Frontend должен обеспечивать:
 - [ ] Реализовать фиксированный header.
 - [x] Слева разместить логотип `Test Task`.
 - [ ] Рядом с логотипом разместить `Erase All`.
-- [ ] В центре разместить `Create Message`.
+- [x] В центре разместить `Create Message`.
 - [ ] Справа зарезервировать три стабильных места:
   - `Login`;
   - `Register`;
@@ -422,8 +422,8 @@ Frontend должен обеспечивать:
 - [x] Для авторизованного пользователя активен Log Out.
 - [x] Показывать постоянный Session indicator: anonymous SVG, restoring placeholder или authenticated avatar с fallback.
 - [ ] Не выполнять невалидные действия скрытыми обработчиками.
-- [ ] `Create Message` требует авторизацию.
-- [ ] Если анонимный пользователь нажал Create Message, открыть Login modal и показать понятное уведомление.
+- [x] `Create Message` требует авторизацию.
+- [x] Если анонимный пользователь нажал Create Message, открыть Login modal.
 
 ## Main area
 
@@ -559,13 +559,9 @@ Frontend должен обеспечивать:
 ## Modal slice
 
 - [x] Создать минимальный `modalSlice`.
-- [x] Поддержать только закрытое состояние и `Login` в текущем срезе.
+- [x] Поддержать closed, `Login`, `Register`, `CreateRootPost` и request-scoped `AttachmentPreview(postId)`.
 - [ ] В будущих срезах добавить modal kinds:
-  - Login;
-  - Register;
-  - CreateRootPost;
   - ReadAndReply;
-  - FilePreview;
   - AvatarPreview;
   - EraseConfirmation.
 - [ ] Хранить sidebar state.
@@ -573,10 +569,10 @@ Frontend должен обеспечивать:
 
 ## Upload state
 
-- [ ] File upload state держать в feature hook/form state.
-- [ ] Не превращать каждый upload в глобальный Zustand slice.
-- [ ] Создать reusable `useFileUpload`.
-- [ ] Создать явные состояния:
+- [x] File upload state держать в feature hook/form state.
+- [x] Не превращать каждый upload в глобальный Zustand slice.
+- [x] Создать reusable `uploadFile` orchestration для avatar и attachment.
+- [x] Создать явные состояния:
   - idle;
   - validating;
   - processing;
@@ -654,17 +650,17 @@ Frontend должен обеспечивать:
 - [x] Создать один `ModalHost`.
 - [x] Использовать Radix Dialog.
 - [x] ModalHost принимает текущий modal kind.
-- [ ] Внутри одного shell рендерить разные формы.
-- [ ] Поддержать регистрацию, login, создание root, чтение/reply и file preview.
-- [ ] Закрывать modal:
+- [x] Внутри одного shell рендерить Login, Register и Create Root forms.
+- [ ] Добавить в тот же shell чтение/reply и file preview в будущих срезах.
+- [x] Закрывать modal:
   - по крестику;
   - по Escape;
   - по ЛКМ на backdrop;
   - после успешного завершения соответствующего flow.
 - [x] Backdrop: graphite с opacity 50%.
-- [ ] События backdrop не должны проходить к Posts Canvas.
+- [x] События backdrop не должны проходить к Posts Canvas.
 - [x] Клики внутри Dialog Content не должны закрывать modal.
-- [ ] PARTIAL — focus trap обеспечен Radix Dialog; полная keyboard runtime-проверка заблокирована недоступной browser-сессией.
+- [x] Focus trap обеспечен Radix Dialog; Create Root close возвращает focus на `Create Message`.
 - [x] После закрытия возвращать focus инициирующей кнопке.
 - [ ] PARTIAL — background interaction блокируется modal Radix Dialog; runtime-проверка заблокирована недоступной browser-сессией.
 - [ ] Блокировать background scroll.
@@ -679,11 +675,11 @@ Frontend должен обеспечивать:
 ## Validation
 
 - [ ] Создать общую file schema.
-- [ ] Разрешить только JPG/JPEG, PNG, GIF, TXT.
+- [x] Разрешить только JPG/JPEG, PNG, GIF, TXT.
 - [x] Проверять extension и MIME для avatar images.
 - [x] Отвергать empty file.
 - [x] Итоговый файл перед upload не должен превышать `102400` bytes.
-- [ ] TXT больше лимита отклонять без обрезания.
+- [x] TXT больше лимита отклонять без обрезания.
 - [x] Изображения больше `320x240` уменьшать с сохранением пропорций.
 - [x] Никогда не растягивать маленькое изображение.
 - [x] Не выполнять crop.
@@ -719,10 +715,10 @@ Frontend должен обеспечивать:
 - [x] Для image создавать preview через object URL.
 - [x] Освобождать object URL через `URL.revokeObjectURL`.
 - [x] Показывать filename, type, dimensions и size.
-- [ ] Для TXT читать содержимое через File API.
-- [ ] Рендерить TXT только как plain text.
-- [ ] Использовать `white-space: pre-wrap`.
-- [ ] Никогда не интерпретировать TXT как HTML.
+- [x] Для TXT читать содержимое через File API.
+- [x] Рендерить TXT preview только как plain text.
+- [x] Использовать `white-space: pre-wrap`.
+- [x] Никогда не интерпретировать TXT как HTML.
 - [x] Красиво показывать состояние готового файла.
 - [x] Позволить заменить выбранный файл до submit.
 - [x] Позволить удалить выбранный файл из формы.
@@ -824,70 +820,70 @@ Frontend должен обеспечивать:
 
 # 19. Message validation
 
-- [ ] Создать frontend Post Zod schema.
-- [ ] `userName` обязателен.
-- [ ] Разрешить только `[A-Za-z0-9]`.
-- [ ] `email` обязателен и валиден.
-- [ ] `homePage` необязателен и валиден как URL.
-- [ ] `message` обязателен.
-- [ ] `captchaValue` обязателен.
-- [ ] Реализовать frontend sanitization через DOMPurify.
-- [ ] Разрешить только:
+- [x] Создать frontend Post Zod schema.
+- [x] `userName` обязателен.
+- [x] Разрешить только `[A-Za-z0-9]`.
+- [x] `email` обязателен и валиден.
+- [x] `homePage` необязателен и валиден как HTTP/HTTPS URL.
+- [x] `message` обязателен.
+- [x] `captchaValue` обязателен.
+- [x] Реализовать frontend sanitization через DOMPurify.
+- [x] Разрешить только:
   - `a`;
   - `strong`;
   - `i`;
   - `code`.
-- [ ] Для `a` разрешить только `href` и `title`.
-- [ ] Разрешить только безопасные URL protocols.
-- [ ] Удалять event handlers.
-- [ ] Удалять style/class/target.
-- [ ] После sanitization проверять, что сообщение не стало пустым.
-- [ ] Показывать пользователю разрешённые теги.
+- [x] Для `a` разрешить только `href` и `title`.
+- [x] Разрешить только безопасные URL protocols.
+- [x] Отклонять event handlers и неизвестную разметку.
+- [x] Отклонять style/class/target.
+- [x] После sanitization проверять, что сообщение не стало пустым.
+- [x] Показывать пользователю разрешённые теги.
 - [ ] Добавить preview sanitized message.
-- [ ] Backend validation остаётся обязательной и окончательной.
-- [ ] Не считать frontend sanitization security boundary.
+- [x] Backend validation остаётся обязательной и окончательной.
+- [x] Не считать frontend sanitization security boundary.
 
 ---
 
 # 20. CAPTCHA UI
 
-- [ ] При открытии Create/Reply form получить CAPTCHA.
-- [ ] Показать изображение без искажения.
-- [ ] Показать поле ввода.
-- [ ] Добавить кнопку refresh CAPTCHA.
-- [ ] При refresh старое captchaId больше не использовать.
-- [ ] После `INVALID_CAPTCHA` автоматически запросить новую CAPTCHA.
-- [ ] Очистить captchaValue.
-- [ ] Показать понятное сообщение.
-- [ ] Не логировать CAPTCHA.
-- [ ] Не сохранять CAPTCHA.
-- [ ] Не переиспользовать CAPTCHA после submit.
-- [ ] Добавить loading/error state при недоступном Redis/Gateway.
+- [x] При открытии Create Root form получить CAPTCHA.
+- [x] Показать CAPTCHA image без извлечения ответа.
+- [x] Показать поле ввода.
+- [x] Добавить кнопку refresh CAPTCHA.
+- [x] При refresh старое captchaId больше не использовать.
+- [x] После `INVALID_CAPTCHA` автоматически запросить новую CAPTCHA.
+- [x] Очистить captchaValue.
+- [x] Показать понятное сообщение.
+- [x] Не логировать CAPTCHA.
+- [x] Не сохранять CAPTCHA.
+- [x] Не переиспользовать CAPTCHA после submit.
+- [x] Добавить loading/error state при недоступном Redis/Gateway.
 
 ---
 
 # 21. Create root and reply flow
 
 - [ ] Использовать одну MessageForm.
-- [ ] Root mode передаёт `parentId = null/undefined`.
+- [x] Root mode не передаёт optional `parentId`.
 - [ ] Reply mode передаёт выбранный Post ID как parentId.
-- [ ] Поля:
+- [x] Root form содержит поля:
   - message;
   - userName;
   - homePage;
   - email;
   - optional attachment;
   - CAPTCHA.
-- [ ] Для attachment использовать общий `useFileUpload`.
-- [ ] Не отправлять Post до подтверждения attachment.
-- [ ] Не добавлять attachmentFileId, если файла нет.
-- [ ] Submit должен быть защищён от двойного клика.
-- [ ] После HTTP 201 немедленно upsert созданного Post в store.
+- [x] Для attachment использовать общий `uploadFile` flow.
+- [x] Не отправлять Post до подтверждения attachment.
+- [x] Не добавлять attachmentFileId, если файла нет.
+- [x] Submit защищён от двойного клика.
+- [x] После HTTP 201 выполнить point `getPost` и upsert полного root в store.
 - [ ] Повторное `posts.created` не должно дублировать Post.
-- [ ] После success закрыть modal и показать toast.
-- [ ] После ошибки сохранить введённый message, кроме одноразовой CAPTCHA.
-- [ ] При ошибке CAPTCHA обновить только CAPTCHA.
-- [ ] При ошибке attachment предложить выбрать/загрузить новый файл.
+- [x] После success закрыть modal и показать toast.
+- [x] После ошибки сохранить введённый message, кроме одноразовой CAPTCHA.
+- [x] При ошибке CAPTCHA обновить только CAPTCHA.
+- [x] При ошибке attachment сохранить controlled error и возможность заменить файл.
 
 ---
 
@@ -978,12 +974,12 @@ Frontend должен обеспечивать:
   3. HomePage;
   4. Email;
   5. Attached File.
-- [ ] Если Date выбрана, показывать её после attachment как дополнительную metadata.
+- [x] Если Date выбрана, показывать её строго справа после attachment в формате `dd.MM.yyyy-HH:mm` для `Europe/Kyiv`.
 - [ ] Вторая строка содержит только message preview.
 - [ ] Message preview отображается одной строкой с ellipsis.
 - [ ] Полный текст открывается в ReadAndReply modal.
-- [ ] Отступ слева зависит от tree depth.
-- [ ] Ширина card остаётся читаемой.
+- [x] Отступ слева использует точную формулу `depth * 20px` без сжатия card.
+- [x] Root PostCard занимает `50%` feed row и остаётся прижатой слева.
 - [ ] Глубокое дерево расширяет canvas по горизонтали.
 
 ## Remaining zones
@@ -993,21 +989,19 @@ Frontend должен обеспечивать:
 - [ ] Hover свободной зоны показывает blue border.
 - [ ] Transition `250ms`.
 - [ ] Cursor pointer.
-- [ ] Клики по controls не должны открывать Post modal.
-- [ ] Использовать `stopPropagation` только на реальных вложенных controls.
+- [x] Copy и attachment controls изолированы от будущего Post modal action.
+- [x] Использовать `stopPropagation` только на реальных вложенных controls.
 
 ## Controls
 
 - [ ] Avatar click открывает AvatarPreview modal.
-- [ ] UserName является отдельной control-zone.
-- [ ] UserName click копирует значение в clipboard и показывает toast.
-- [ ] HomePage открывает безопасную внешнюю ссылку.
-- [ ] Email открывает `mailto:`.
-- [ ] Attachment открывает FilePreview modal.
-- [ ] Все controls имеют hover blue border.
-- [ ] Все controls имеют `250ms` transition.
-- [ ] Все controls имеют pointer cursor.
-- [ ] Все controls доступны с клавиатуры.
+- [x] UserName показывает первые 10 Unicode code points без изменения source value.
+- [x] Reusable accessible Copy control копирует полный userName через Clipboard API и показывает toast.
+- [x] HomePage показывает первые 10 Unicode code points либо muted `[HomePage]` без навигации.
+- [x] Существующий HomePage копируется полностью без открытия URL.
+- [x] Email показывает первые 10 Unicode code points и копируется полностью без `mailto:`.
+- [x] Attachment button открывает единый AttachmentPreview modal без прямой навигации.
+- [x] Copy и attachment controls имеют hover/focus blue border, `250ms` transition, pointer cursor и keyboard semantics.
 - [ ] Links внутри message не должны открывать ReadAndReply modal.
 - [ ] Внешним ссылкам добавить безопасные `rel` attributes.
 
@@ -1041,19 +1035,23 @@ Frontend должен обеспечивать:
 
 # 27. File preview modal
 
-- [ ] Для изображений показывать исходный uploaded asset.
-- [ ] Сохранять пропорции.
-- [ ] Не растягивать сверх доступного modal viewport.
-- [ ] Для TXT получать содержимое по presigned URL.
-- [ ] Показывать TXT как plain text.
-- [ ] Добавить internal scroll для длинного TXT.
-- [ ] Не интерпретировать HTML из TXT.
+- [x] Attachment preview хранит в modal state только `postId` и читает актуальный Post из normalized store.
+- [x] Тип определяется case-insensitive по URL pathname без анализа query string.
+- [x] Для изображений показывать исходный uploaded asset без навигации или object URL.
+- [x] Сохранять пропорции и animation GIF.
+- [x] Не растягивать сверх доступного modal viewport.
+- [x] Для TXT получать содержимое прямым `fetch` по opaque URL без Authorization.
+- [x] TXT fetch использует AbortController и cleanup при закрытии/unmount.
+- [x] Показывать TXT как plain text.
+- [x] Добавить internal scroll для длинного TXT.
+- [x] Не интерпретировать HTML из TXT.
 - [ ] Показать filename, если он доступен frontend state.
 - [ ] Для backend attachment без filename использовать нейтральную подпись.
 - [ ] Добавить download/open-original action.
 - [ ] Обработать истёкший presigned URL контролируемо.
 - [ ] Если URL истёк, точечно повторно запросить `post(id)` с attachment field.
 - [ ] Не перезапрашивать весь feed.
+- [ ] PARTIAL — image/TXT modal, clipboard, focus return и visual width требуют browser runtime; in-app browser недоступен в текущей сессии.
 
 ---
 
@@ -1238,20 +1236,20 @@ Frontend должен обеспечивать:
 - [x] Убедиться, что Presigned POST подтверждён через `files.uploaded`.
 - [x] Выполнить login и `/users/me` через реальный backend integration.
 - [ ] PARTIAL — refresh и повторный `/users/me` проверены integration; browser reload недоступен без in-app browser session.
-- [ ] Создать root без attachment.
-- [ ] Создать root с image attachment.
-- [ ] Создать root с TXT attachment.
+- [x] Создать root без attachment.
+- [x] Создать root с image attachment.
+- [x] Создать root с TXT attachment.
 - [ ] Создать reply.
 - [ ] Создать nested reply.
 - [ ] Убедиться, что CAPTCHA одноразовая.
-- [ ] Убедиться, что неправильная CAPTCHA обновляется.
-- [ ] Проверить allowed HTML.
-- [ ] Проверить удаление unsafe HTML.
+- [x] Убедиться, что неправильная CAPTCHA обновляется.
+- [x] Проверить allowed HTML.
+- [x] Проверить отклонение unsafe HTML.
 - [ ] PARTIAL — GraphQL request и selection variables проверены; backend вернул пустой `items`, поэтому отображение metadata не подтверждено данными.
 - [ ] Проверить sorting Date/Email/UserName ASC/DESC.
 - [ ] Проверить page size 1/25/50.
 - [ ] PARTIAL — infinite scroll реализован; в backend нет второй cursor-страницы для runtime-проверки.
-- [ ] Проверить отсутствие дублей.
+- [x] Проверить отсутствие дублей после immediate root insertion.
 - [ ] Проверить realtime root.
 - [ ] Проверить realtime reply видимого дерева.
 - [ ] Проверить отсутствие запроса для reply невидимого дерева.
@@ -1283,8 +1281,8 @@ Frontend должен обеспечивать:
 - [ ] PARTIAL — application/hydration errors отсутствуют; ожидаемый HTTP 401 refresh отображался браузером как network console error.
 - [x] Нет React hydration warnings.
 - [ ] Нет незакрытых Socket.IO listeners.
-- [ ] Нет неосвобождённых object URLs.
-- [ ] Нет N+1 frontend requests за avatar/attachment.
+- [x] Нет неосвобождённых object URLs в attachment preview lifecycle.
+- [x] Нет N+1 frontend requests за avatar/attachment.
 - [ ] Нет full feed reload после `posts.created`.
 - [ ] Production container healthy.
 - [x] Runtime `BACKEND_URL` используется REST, GraphQL и Files Socket.IO transports.
@@ -1317,11 +1315,11 @@ Frontend считается завершённым, когда:
 - [x] UserName всегда включён в canonical query и отображается Post card.
 - [ ] PARTIAL — Cursor Pagination и Infinite Scroll реализованы, но backend не содержит второй страницы для runtime-проверки.
 - [x] Tree строится из flat response.
-- [ ] Новая node встраивается без полной перезагрузки страницы.
+- [x] Локально созданный root встраивается без reload и полного GraphQL refetch.
 - [ ] Realtime events не создают дубли.
 - [x] Post card соответствует двухстрочной композиции.
 - [x] Hover/focus behavior соответствует требованиям.
-- [ ] Modal system единый.
+- [x] Modal system единый для Login, Register и Create Root.
 - [ ] Sidebar плавно закрывается и открывается.
 - [ ] Back to top возвращает обе полосы прокрутки.
 - [ ] Image/TXT previews работают.

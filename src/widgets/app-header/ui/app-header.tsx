@@ -11,9 +11,11 @@ import { Button } from "@/shared/ui/button";
 
 interface AppHeaderProps {
   client: RestClient;
+  createMessageButtonRef: Ref<HTMLButtonElement>;
   currentUser: CurrentUser | null;
   loginButtonRef: Ref<HTMLButtonElement>;
   onAnonymous: () => void;
+  onCreateMessage: () => void;
   onOpenLogin: () => void;
   onOpenRegister: () => void;
   registerButtonRef: Ref<HTMLButtonElement>;
@@ -22,9 +24,11 @@ interface AppHeaderProps {
 
 export function AppHeader({
   client,
+  createMessageButtonRef,
   currentUser,
   loginButtonRef,
   onAnonymous,
+  onCreateMessage,
   onOpenLogin,
   onOpenRegister,
   registerButtonRef,
@@ -33,6 +37,13 @@ export function AppHeader({
   return (
     <header className="app-header">
       <span className="app-logo">Test Task</span>
+      <Button
+        disabled={status === "idle" || status === "restoring"}
+        onClick={onCreateMessage}
+        ref={createMessageButtonRef}
+      >
+        Create Message
+      </Button>
       <div className="app-header-actions">
         <div aria-hidden="true" className="session-indicator">
           {status === "authenticated" && currentUser ? (

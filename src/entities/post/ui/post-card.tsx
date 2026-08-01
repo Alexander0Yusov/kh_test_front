@@ -1,11 +1,14 @@
 "use client";
 
-import DOMPurify from "isomorphic-dompurify";
 import { Paperclip, UserRound } from "lucide-react";
 import Image from "next/image";
 import { useMemo, useState } from "react";
 
 import type { PostViewModel } from "../model/posts-slice";
+import { formatPublishDate } from "../model/format-publish-date";
+import { formatPostMetadataPreview } from "../model/format-post-metadata";
+import { sanitizePostMessage } from "../model/sanitize-post-message";
+import { CopyMetadataButton } from "./copy-metadata-button";
 
 interface PostAvatarProps {
   url?: string | null;
@@ -35,13 +38,6 @@ function PostAvatar({ url }: PostAvatarProps) {
   );
 }
 
-function formatPublishDate(value: unknown): string | null {
-  if (typeof value !== "string") return null;
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return null;
-  return date.toLocaleString();
-}
-
 function getSafeExternalUrl(value: string | null | undefined): string | null {
   if (!value) return null;
 
@@ -54,19 +50,22 @@ function getSafeExternalUrl(value: string | null | undefined): string | null {
 }
 
 interface PostCardProps {
+  onAttachmentPreview: AttachmentPreviewRequest;
   post: PostViewModel;
 }
 
-export function PostCard({ post }: PostCardProps) {
+export type AttachmentPreviewRequest = (
+  postId: string,
+  trigger: HTMLButtonElement,
+) => void;
+
+export function PostCard({ onAttachmentPreview, post }: PostCardProps) {
   const publishDate = formatPublishDate(post.publishDate);
   const attachmentUrl = getSafeExternalUrl(post.attachmentUrl);
   const homePage = getSafeExternalUrl(post.homePage);
   const sanitizedMessage = useMemo(
     () =>
-      DOMPurify.sanitize(post.message, {
-        ALLOWED_ATTR: ["href"],
-        ALLOWED_TAGS: ["a", "strong", "i", "code"],
-      }),
+      sanitizePostMessage(post.message),
     [post.message],
   );
 
@@ -74,26 +73,53 @@ export function PostCard({ post }: PostCardProps) {
     <article className="post-card">
       <div className="post-metadata">
         <PostAvatar key={post.avatarUrl ?? "fallback"} url={post.avatarUrl} />
-        <strong className="post-author">{post.userName}</strong>
+        <span className="post-metadata-pair">
+          <strong className="post-author">{formatPostMetadataPreview(post.userName)}</strong>
+          <CopyMetadataButton
+            accessibleLabel="Copy user name"
+            successMessage="User name copied."
+            value={post.userName}
+          />
+        </span>
         {homePage ? (
-          <a href={homePage} rel="noopener noreferrer" target="_blank">
-            Home page
-          </a>
+          <span className="post-metadata-pair">
+            <span className="post-metadata-value">{formatPostMetadataPreview(post.homePage ?? "")}</span>
+            <CopyMetadataButton
+              accessibleLabel="Copy home page"
+              successMessage="Home page copied."
+              value={post.homePage ?? ""}
+            />
+          </span>
+        ) : (
+          <span className="post-metadata-placeholder">[HomePage]</span>
+        )}
+        {post.email ? (
+          <span className="post-metadata-pair">
+            <span className="post-metadata-value">{formatPostMetadataPreview(post.email)}</span>
+            <CopyMetadataButton
+              accessibleLabel="Copy email"
+              successMessage="Email copied."
+              value={post.email}
+            />
+          </span>
         ) : null}
-        {post.email ? <a href={`mailto:${post.email}`}>{post.email}</a> : null}
         {attachmentUrl ? (
-          <a
-            aria-label="Open attachment"
+          <button
+            aria-label="Preview attachment"
             className="post-attachment"
-            href={attachmentUrl}
-            rel="noopener noreferrer"
-            target="_blank"
+            onClick={(event) => {
+              event.stopPropagation();
+              onAttachmentPreview(post.id, event.currentTarget);
+            }}
+            type="button"
           >
             <Paperclip aria-hidden="true" size={16} />
             Attachment
-          </a>
+          </button>
         ) : null}
-        {publishDate ? <time dateTime={String(post.publishDate)}>{publishDate}</time> : null}
+        {publishDate && typeof post.publishDate === "string" ? (
+          <time dateTime={post.publishDate}>{publishDate}</time>
+        ) : null}
       </div>
       <div
         className="post-message"

@@ -1,4 +1,11 @@
 export { buildPostTreeRows, type PostTreeRow } from "./model/build-post-tree";
+export { formatPublishDate } from "./model/format-publish-date";
+export { formatPostMetadataPreview } from "./model/format-post-metadata";
+export { mapRestPost } from "./model/map-rest-post";
+export {
+  isSanitizedPostMessageEmpty,
+  sanitizePostMessage,
+} from "./model/sanitize-post-message";
 export {
   createPostsSlice,
   type PostFieldSelection,
@@ -8,4 +15,4 @@ export {
   type PostsSlice,
   type PostViewModel,
 } from "./model/posts-slice";
-export { PostCard } from "./ui/post-card";
+export { PostCard, type AttachmentPreviewRequest } from "./ui/post-card";

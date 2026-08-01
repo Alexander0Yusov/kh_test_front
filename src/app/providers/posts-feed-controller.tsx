@@ -8,18 +8,22 @@ import { PostsFeed } from "@/widgets/posts-feed";
 
 import { useAppStore, useAppStoreApi } from "../store/store-provider";
 import { useRuntimeGraphqlClient } from "./runtime-client-provider";
+import { useModalReturnFocus } from "./login-trigger-provider";
 
 const FEED_ERROR_MESSAGE = "Messages could not be loaded.";
 
 export function PostsFeedController() {
   const client = useRuntimeGraphqlClient();
+  const { setReturnFocus } = useModalReturnFocus();
   const store = useAppStoreApi();
   const requestControllerRef = useRef<AbortController | null>(null);
   const error = useAppStore((state) => state.postsError);
   const hasMore = useAppStore((state) => state.hasMore);
   const nextCursor = useAppStore((state) => state.nextCursor);
+  const openAttachmentPreview = useAppStore((state) => state.openAttachmentPreview);
   const postsById = useAppStore((state) => state.postsById);
   const rootIds = useAppStore((state) => state.rootIds);
+  const reloadToken = useAppStore((state) => state.reloadToken);
   const status = useAppStore((state) => state.postsStatus);
   const rows = useMemo(() => buildPostTreeRows(postsById, rootIds), [postsById, rootIds]);
 
@@ -69,12 +73,15 @@ export function PostsFeedController() {
       requestControllerRef.current?.abort();
       requestControllerRef.current = null;
     };
-  }, [loadInitial, store]);
+  }, [loadInitial, reloadToken, store]);
 
   const retry = useCallback(() => {
     if (store.getState().rootIds.length === 0) void loadInitial();
     else void loadMore();
   }, [loadInitial, loadMore, store]);
 
-  return <PostsFeed error={error} hasMore={hasMore && nextCursor !== null} onLoadMore={() => void loadMore()} onRetry={retry} rows={rows} status={status} />;
+  return <PostsFeed error={error} hasMore={hasMore && nextCursor !== null} onAttachmentPreview={(postId, trigger) => {
+    setReturnFocus(trigger);
+    openAttachmentPreview(postId);
+  }} onLoadMore={() => void loadMore()} onRetry={retry} rows={rows} status={status} />;
 }

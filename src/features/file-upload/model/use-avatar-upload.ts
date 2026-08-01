@@ -12,9 +12,10 @@ import type {
   FileUploadedExpectation,
   FilesSocketClient,
   RestClient,
-  components,
 } from "@/shared/api";
 import { type ProcessedAvatar, processAvatar } from "@/shared/lib/image-processing";
+
+import { uploadFile } from "./upload-file";
 
 export type UploadStatus =
   | "idle"
@@ -27,8 +28,6 @@ export type UploadStatus =
   | "awaitingConfirmation"
   | "uploaded"
   | "failed";
-
-type CreateUploadRequest = components["schemas"]["CreateUploadDto"];
 
 export interface AvatarUploadController {
   error: string | null;
@@ -114,45 +113,18 @@ export function useAvatarUpload(
     operation.current = (async () => {
       try {
         setError(null);
-        setStatus("requesting");
-        const body = {
-          fileExtension: file.extension,
-          fileSize: file.file.size,
-        } satisfies CreateUploadRequest;
-        const uploadRequest = await client.POST("/files/upload-request", { body });
-        if (!uploadRequest.data) throw new Error("Не удалось подготовить загрузку avatar.");
-
-        const { fileId, uploadFields, uploadUrl } = uploadRequest.data;
-        const uploaded = filesClient.expectUploaded(fileId);
-        uploadExpectation.current = uploaded;
-        setStatus("subscribing");
-        await filesClient.subscribe(fileId);
-        setStatus("uploading");
-        const formData = new FormData();
-        for (const [name, value] of Object.entries(uploadFields)) formData.append(name, value);
-        formData.append("file", file.file);
-        let storageResponse: Response;
-        try {
-          storageResponse = await fetch(uploadUrl, {
-            body: formData,
-            method: "POST",
-          });
-        } catch {
-          throw new Error(
-            "Could not upload avatar to storage. Check storage availability and CORS.",
-          );
-        }
-        if (!storageResponse.ok) {
-          throw new Error(
-            `Storage rejected avatar upload with HTTP ${storageResponse.status}.`,
-          );
-        }
-        setStatus("awaitingConfirmation");
-        uploaded.startTimeout();
-        await uploaded.promise;
-        uploadExpectation.current = null;
+        const fileId = await uploadFile({
+          client,
+          extension: file.extension,
+          file: file.file,
+          filesClient,
+          label: "avatar",
+          onExpectation: (expectation) => {
+            uploadExpectation.current = expectation;
+          },
+          onStage: setStatus,
+        });
         confirmedFileId.current = fileId;
-        setStatus("uploaded");
         return fileId;
       } catch (reason: unknown) {
         cancelUploadExpectation();
