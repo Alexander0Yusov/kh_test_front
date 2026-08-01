@@ -82,6 +82,58 @@ select {
   overflow: auto;
 }
 
+.feed-top-anchor {
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+.back-to-feed-origin {
+  position: fixed;
+  z-index: 3;
+  right: 1rem;
+  bottom: 1rem;
+  appearance: none;
+  display: grid;
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  border: 1px solid var(--color-graphite);
+  border-radius: 0;
+  place-items: center;
+  background: var(--color-background-primary);
+  color: var(--color-graphite);
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(0.5rem);
+  transition:
+    border-color var(--default-transition-duration),
+    color var(--default-transition-duration),
+    opacity var(--default-transition-duration),
+    transform var(--default-transition-duration),
+    visibility 0s linear var(--default-transition-duration);
+}
+
+.back-to-feed-origin.is-visible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0);
+  transition-delay: 0s;
+}
+
+.back-to-feed-origin:hover,
+.back-to-feed-origin:focus-visible {
+  border-color: var(--color-active-blue);
+  color: var(--color-active-blue);
+}
+
+.back-to-feed-origin:disabled {
+  pointer-events: none;
+}
+
 .options-sidebar-dock {
   position: fixed;
   z-index: 4;

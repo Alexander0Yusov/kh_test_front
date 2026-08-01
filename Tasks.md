@@ -1436,3 +1436,12 @@ Frontend считается завершённым, когда:
 - [x] Local runtime returned HTTP 204 with an empty body; the following GraphQL feed was empty and refresh returned 401.
 - [ ] PARTIAL: browser confirmation/focus/network inspection and post-reset Registration/Login smoke flow.
 - [ ] Remote-device erase synchronization is outside the current scope.
+
+## Back to Top + Left implementation status
+
+- [x] `.app-workspace` is the verified vertical and horizontal scroll owner; `.post-tree` only creates the wide canvas.
+- [x] Back to Top + Left control observes both scroll coordinates with passive listeners and one animation-frame gate.
+- [x] One activation resets `scrollTop` and `scrollLeft` together without changing feed state or starting a request.
+- [x] Keyboard activation moves focus to the feed top anchor before the control disappears.
+- [x] Smooth scrolling respects `prefers-reduced-motion` and becomes immediate when reduced motion is requested.
+- [ ] PARTIAL: browser confirmation of visibility, focus transfer, modal blocking, and absence of Network activity.
