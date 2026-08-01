@@ -5,7 +5,7 @@ import { type RefObject, useEffect, useState } from "react";
 import type { PostViewModel } from "@/entities/post";
 import type { CurrentUser } from "@/entities/session";
 import { AttachmentPreview } from "@/features/attachment-preview";
-import { CreateRootPostForm } from "@/features/create-post";
+import { CreatePostForm } from "@/features/create-post";
 import { LoginForm } from "@/features/login";
 import {
   AttachmentUploadField,
@@ -14,6 +14,7 @@ import {
   useAvatarUpload,
 } from "@/features/file-upload";
 import { RegistrationForm } from "@/features/registration";
+import { PostInteraction } from "@/features/post-interaction";
 import type { FilesSocketClient, RestClient } from "@/shared/api";
 import { Dialog } from "@/shared/ui/dialog";
 
@@ -21,15 +22,18 @@ interface ModalHostProps {
   attachmentPreviewUrl: string | null;
   client: RestClient;
   filesClient: FilesSocketClient;
-  modal: "attachmentPreview" | "createRootPost" | "login" | "register" | null;
+  modal: "attachmentPreview" | "createRootPost" | "login" | "postInteraction" | "register" | null;
   onAuthenticated: (
     accessToken: string,
     currentUser: CurrentUser,
   ) => void;
   onClose: () => void;
-  onCreatedRoot: (post: PostViewModel) => void;
+  onCreatedPost: (post: PostViewModel) => void;
   onCreatedWithoutEnrichment: () => void;
   onUnauthorized: () => void;
+  onOpenLogin: () => void;
+  postInteractionPost: PostViewModel | null;
+  postInteractionPostId: string | null;
   returnFocusRef: RefObject<HTMLElement | null>;
   sessionStatus: "anonymous" | "authenticated" | "error" | "idle" | "restoring";
 }
@@ -41,9 +45,12 @@ export function ModalHost({
   modal,
   onAuthenticated,
   onClose,
-  onCreatedRoot,
+  onCreatedPost,
   onCreatedWithoutEnrichment,
   onUnauthorized,
+  onOpenLogin,
+  postInteractionPost,
+  postInteractionPostId,
   returnFocusRef,
   sessionStatus,
 }: ModalHostProps) {
@@ -56,11 +63,13 @@ export function ModalHost({
 
   useEffect(() => {
     if (modal !== "register") resetAvatar();
-    if (modal !== "createRootPost") resetAttachment();
+    if (modal !== "createRootPost" && modal !== "postInteraction") resetAttachment();
   }, [modal, resetAttachment, resetAvatar]);
 
   const title =
-    modal === "attachmentPreview"
+    modal === "postInteraction"
+      ? "Read & Answer"
+      : modal === "attachmentPreview"
       ? "Attachment Preview"
       : modal === "register"
       ? "Регистрация"
@@ -72,7 +81,7 @@ export function ModalHost({
     <Dialog
       closeDisabled={
         (modal === "register" && registrationBusy) ||
-        (modal === "createRootPost" && createPostBusy)
+        ((modal === "createRootPost" || modal === "postInteraction") && createPostBusy)
       }
       onOpenChange={(open) => {
         if (!open) {
@@ -100,12 +109,12 @@ export function ModalHost({
         />
       ) : null}
       {modal === "createRootPost" ? (
-        <CreateRootPostForm
+        <CreatePostForm
           attachmentField={<AttachmentUploadField controller={attachment} />}
           client={client}
           isAuthenticated={sessionStatus === "authenticated"}
           onBusyChange={setCreatePostBusy}
-          onCreated={onCreatedRoot}
+          onCreated={onCreatedPost}
           onCreatedWithoutEnrichment={onCreatedWithoutEnrichment}
           onSuccess={() => {
             attachment.reset();
@@ -117,6 +126,34 @@ export function ModalHost({
       ) : null}
       {modal === "attachmentPreview" ? (
         <AttachmentPreview attachmentUrl={attachmentPreviewUrl} />
+      ) : null}
+      {modal === "postInteraction" && postInteractionPostId ? (
+        <PostInteraction
+          answerForm={
+            <CreatePostForm
+              attachmentField={<AttachmentUploadField controller={attachment} />}
+              client={client}
+              isAuthenticated={sessionStatus === "authenticated"}
+              onBusyChange={setCreatePostBusy}
+              onCreated={onCreatedPost}
+              onCreatedWithoutEnrichment={onCreatedWithoutEnrichment}
+              onSuccess={() => {
+                attachment.reset();
+                onClose();
+              }}
+              onUnauthorized={onUnauthorized}
+              parentId={postInteractionPostId}
+              uploadAttachment={attachment.upload}
+            />
+          }
+          client={client}
+          initialPost={postInteractionPost}
+          key={postInteractionPostId}
+          onLoaded={onCreatedPost}
+          onLogin={onOpenLogin}
+          postId={postInteractionPostId}
+          sessionStatus={sessionStatus}
+        />
       ) : null}
     </Dialog>
   );

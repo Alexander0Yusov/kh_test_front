@@ -21,6 +21,7 @@ export function PostsFeedController() {
   const hasMore = useAppStore((state) => state.hasMore);
   const nextCursor = useAppStore((state) => state.nextCursor);
   const openAttachmentPreview = useAppStore((state) => state.openAttachmentPreview);
+  const openPostInteraction = useAppStore((state) => state.openPostInteraction);
   const postsById = useAppStore((state) => state.postsById);
   const rootIds = useAppStore((state) => state.rootIds);
   const reloadToken = useAppStore((state) => state.reloadToken);
@@ -83,5 +84,8 @@ export function PostsFeedController() {
   return <PostsFeed error={error} hasMore={hasMore && nextCursor !== null} onAttachmentPreview={(postId, trigger) => {
     setReturnFocus(trigger);
     openAttachmentPreview(postId);
-  }} onLoadMore={() => void loadMore()} onRetry={retry} rows={rows} status={status} />;
+  }} onLoadMore={() => void loadMore()} onPostInteraction={(postId, trigger) => {
+    setReturnFocus(trigger);
+    openPostInteraction(postId);
+  }} onRetry={retry} rows={rows} status={status} />;
 }

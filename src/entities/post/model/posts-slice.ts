@@ -65,7 +65,7 @@ interface PostsActions {
     message: string,
     requestedCursor?: string,
   ) => void;
-  upsertRoot: (post: PostViewModel) => void;
+  upsertPost: (post: PostViewModel) => void;
 }
 
 export type PostsSlice = PostsActions & PostsState;
@@ -249,20 +249,21 @@ export const createPostsSlice: StateCreator<PostsSlice> = (set, get) => ({
       postsStatus: "error",
     });
   },
-  upsertRoot: (post) => {
-    if (post.parentId !== null) return;
+  upsertPost: (post) => {
     const state = get();
     const postsById = { ...state.postsById, [post.id]: post };
-    const rootIds = state.rootIds.includes(post.id)
-      ? [...state.rootIds]
-      : [...state.rootIds, post.id];
+    const rootIds = post.parentId === null && !state.rootIds.includes(post.id)
+      ? [...state.rootIds, post.id]
+      : [...state.rootIds];
 
-    rootIds.sort((leftId, rightId) => {
-      const left = postsById[leftId];
-      const right = postsById[rightId];
-      if (!left || !right) return 0;
-      return compareRootPosts(left, right, state.rules);
-    });
+    if (post.parentId === null) {
+      rootIds.sort((leftId, rightId) => {
+        const left = postsById[leftId];
+        const right = postsById[rightId];
+        if (!left || !right) return 0;
+        return compareRootPosts(left, right, state.rules);
+      });
+    }
 
     set({ postsById, rootIds });
   },

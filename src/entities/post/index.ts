@@ -15,4 +15,8 @@ export {
   type PostsSlice,
   type PostViewModel,
 } from "./model/posts-slice";
-export { PostCard, type AttachmentPreviewRequest } from "./ui/post-card";
+export {
+  PostCard,
+  type AttachmentPreviewRequest,
+  type PostInteractionRequest,
+} from "./ui/post-card";

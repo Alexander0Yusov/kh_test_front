@@ -1,1 +1,1 @@
-export { CreateRootPostForm } from "./ui/create-root-post-form";
+export { CreatePostForm } from "./ui/create-root-post-form";

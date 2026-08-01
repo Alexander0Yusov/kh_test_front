@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { type ReactNode, useEffect } from "react";
+import { type ReactNode, useEffect, useRef } from "react";
 
 import type { PostViewModel } from "@/entities/post";
 import type { RestClient } from "@/shared/api";
@@ -9,9 +9,10 @@ import { Button } from "@/shared/ui/button";
 import { FormField } from "@/shared/ui/form-field";
 import { Input } from "@/shared/ui/input";
 
-import { useCreateRootPost } from "../model/use-create-root-post";
+import { useCreatePost } from "../model/use-create-root-post";
+import { MessageTagToolbar } from "./message-tag-toolbar";
 
-interface CreateRootPostFormProps {
+interface CreatePostFormProps {
   attachmentField: ReactNode;
   client: RestClient;
   isAuthenticated: boolean;
@@ -20,10 +21,11 @@ interface CreateRootPostFormProps {
   onBusyChange: (busy: boolean) => void;
   onSuccess: () => void;
   onUnauthorized: () => void;
+  parentId?: string;
   uploadAttachment: () => Promise<string | undefined>;
 }
 
-export function CreateRootPostForm({
+export function CreatePostForm({
   attachmentField,
   client,
   isAuthenticated,
@@ -32,26 +34,67 @@ export function CreateRootPostForm({
   onBusyChange,
   onSuccess,
   onUnauthorized,
+  parentId,
   uploadAttachment,
-}: CreateRootPostFormProps) {
-  const { captcha, form, refreshCaptcha, submit } = useCreateRootPost({
+}: CreatePostFormProps) {
+  const { captcha, form, refreshCaptcha, submit } = useCreatePost({
     client,
     isAuthenticated,
     onCreated,
     onCreatedWithoutEnrichment,
     onSuccess,
     onUnauthorized,
+    parentId,
     uploadAttachment,
   });
   const {
     formState: { errors, isSubmitting },
     register,
   } = form;
+  const messageTextareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const selectionFrameRef = useRef<number | null>(null);
+  const messageRegistration = register("message");
+
+  const insertMessageTags = (openingTag: string, closingTag: string): void => {
+    const textarea = messageTextareaRef.current;
+    if (!textarea || isSubmitting) return;
+
+    const value = form.getValues("message");
+    const selectionStart = textarea.selectionStart;
+    const selectionEnd = textarea.selectionEnd;
+    const selectedText = value.slice(selectionStart, selectionEnd);
+    const nextValue = `${value.slice(0, selectionStart)}${openingTag}${selectedText}${closingTag}${value.slice(selectionEnd)}`;
+    const nextSelectionStart = selectionStart + openingTag.length;
+    const nextSelectionEnd = nextSelectionStart + selectedText.length;
+
+    form.setValue("message", nextValue, {
+      shouldDirty: true,
+      shouldTouch: true,
+      shouldValidate: true,
+    });
+
+    if (selectionFrameRef.current !== null) {
+      cancelAnimationFrame(selectionFrameRef.current);
+    }
+    selectionFrameRef.current = requestAnimationFrame(() => {
+      const currentTextarea = messageTextareaRef.current;
+      if (!currentTextarea) return;
+      currentTextarea.focus();
+      currentTextarea.setSelectionRange(nextSelectionStart, nextSelectionEnd);
+      selectionFrameRef.current = null;
+    });
+  };
 
   useEffect(() => {
     onBusyChange(isSubmitting);
     return () => onBusyChange(false);
   }, [isSubmitting, onBusyChange]);
+
+  useEffect(() => () => {
+    if (selectionFrameRef.current !== null) {
+      cancelAnimationFrame(selectionFrameRef.current);
+    }
+  }, []);
 
   return (
     <form className="create-post-form" noValidate onSubmit={submit}>
@@ -110,8 +153,13 @@ export function CreateRootPostForm({
           className="ui-input create-post-message"
           disabled={isSubmitting}
           id="create-post-message"
-          {...register("message")}
+          {...messageRegistration}
+          ref={(node) => {
+            messageRegistration.ref(node);
+            messageTextareaRef.current = node;
+          }}
         />
+        <MessageTagToolbar disabled={isSubmitting} onInsert={insertMessageTags} />
         <span className="form-hint" id="create-post-message-hint">
           Allowed tags: a[href,title], strong, i, code. Unsupported markup is rejected.
         </span>
@@ -162,7 +210,13 @@ export function CreateRootPostForm({
         disabled={isSubmitting || captcha.status !== "ready"}
         type="submit"
       >
-        {isSubmitting ? "Creating message…" : "Create Message"}
+        {isSubmitting
+          ? parentId
+            ? "Creating reply…"
+            : "Creating message…"
+          : parentId
+            ? "Answer"
+            : "Create Message"}
       </Button>
     </form>
   );

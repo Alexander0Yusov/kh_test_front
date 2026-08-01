@@ -206,7 +206,7 @@ Frontend должен обеспечивать:
 ## Post contract
 
 - [x] Создание root post выполняется без `parentId`.
-- [ ] Создание reply выполняется с `parentId`.
+- [x] Reply composer передаёт выбранный Post ID как optional `parentId` в unified `createPost`.
 - [x] Каждый root Post принимает собственные `userName`, `email`, `message`, `captchaId`, `captchaValue`.
 - [x] `homePage` необязателен.
 - [x] `attachmentFileId` необязателен.
@@ -561,7 +561,6 @@ Frontend должен обеспечивать:
 - [x] Создать минимальный `modalSlice`.
 - [x] Поддержать closed, `Login`, `Register`, `CreateRootPost` и request-scoped `AttachmentPreview(postId)`.
 - [ ] В будущих срезах добавить modal kinds:
-  - ReadAndReply;
   - AvatarPreview;
   - EraseConfirmation.
 - [ ] Хранить sidebar state.
@@ -651,13 +650,16 @@ Frontend должен обеспечивать:
 - [x] Использовать Radix Dialog.
 - [x] ModalHost принимает текущий modal kind.
 - [x] Внутри одного shell рендерить Login, Register и Create Root forms.
-- [ ] Добавить в тот же shell чтение/reply и file preview в будущих срезах.
+- [x] Единый shell обслуживает Login, Register, Create Root, Attachment Preview и Read & Answer.
 - [x] Закрывать modal:
   - по крестику;
   - по Escape;
   - по ЛКМ на backdrop;
   - после успешного завершения соответствующего flow.
 - [x] Backdrop: graphite с opacity 50%.
+- [x] Dialog Portal layering contract: Overlay выше application shell, Content выше Overlay.
+- [x] Overlay может быть translucent; Dialog Content, Read/Answer sections и form controls всегда opaque.
+- [x] Post interaction layers изолированы внутри PostCard и остаются ниже Dialog Portal layers.
 - [x] События backdrop не должны проходить к Posts Canvas.
 - [x] Клики внутри Dialog Content не должны закрывать modal.
 - [x] Focus trap обеспечен Radix Dialog; Create Root close возвращает focus на `Create Message`.
@@ -864,9 +866,9 @@ Frontend должен обеспечивать:
 
 # 21. Create root and reply flow
 
-- [ ] Использовать одну MessageForm.
+- [x] Использовать одну `CreatePostForm` для root и reply.
 - [x] Root mode не передаёт optional `parentId`.
-- [ ] Reply mode передаёт выбранный Post ID как parentId.
+- [x] Reply mode передаёт выбранный Post ID как parentId.
 - [x] Root form содержит поля:
   - message;
   - userName;
@@ -968,31 +970,55 @@ Frontend должен обеспечивать:
 ## Structure
 
 - [ ] Post визуально состоит из двух строк.
-- [ ] Первая строка имеет строгий порядок:
+- [x] Первая строка имеет строгий порядок:
   1. Avatar;
   2. UserName;
-  3. HomePage;
-  4. Email;
-  5. Attached File.
+  3. Email;
+  4. HomePage;
+  5. Attached File;
+  6. Kyiv publishDate.
 - [x] Если Date выбрана, показывать её строго справа после attachment в формате `dd.MM.yyyy-HH:mm` для `Europe/Kyiv`.
 - [ ] Вторая строка содержит только message preview.
 - [ ] Message preview отображается одной строкой с ellipsis.
-- [ ] Полный текст открывается в ReadAndReply modal.
+- [x] Полный текст открывается в Read & Answer modal.
 - [x] Отступ слева использует точную формулу `depth * 20px` без сжатия card.
-- [x] Root PostCard занимает `50%` feed row и остаётся прижатой слева.
+- [x] Root PostCard увеличена на `100px` до `calc(50% + 100px)` / minimum `calc(38rem + 100px)` и остаётся прижатой слева.
+- [x] Compact PostCard right edge trimmed by shared `2.25rem` token while preserving the full `16ch` Kyiv date.
 - [ ] Глубокое дерево расширяет canvas по горизонтали.
 
 ## Remaining zones
 
-- [ ] Клик по свободной зоне Post открывает ReadAndReply modal.
-- [ ] Клик по message preview открывает ReadAndReply modal.
-- [ ] Hover свободной зоны показывает blue border.
-- [ ] Transition `250ms`.
-- [ ] Cursor pointer.
-- [x] Copy и attachment controls изолированы от будущего Post modal action.
+- [x] Одна semantic background button-zone покрывает все non-control области PostCard и открывает Read & Answer modal.
+- [x] Post open action доступен мышью, Enter и Space и имеет contextual aria-label.
+- [x] Внешняя PostCard получает active blue border как единый блок при hover и Post action focus-visible.
+- [x] Full-card border использует transition `250ms` без layout shift.
+- [x] Pointer cursor применяется только к Post action и собственным interactive controls.
+- [x] Metadata, copy, attachment, avatar и date изолированы от Post open action.
 - [x] Использовать `stopPropagation` только на реальных вложенных controls.
 
 ## Controls
+
+### Metadata grid
+
+- [x] Все PostCard используют одну fixed CSS Grid schema для avatar, metadata, Copy actions, attachment и Kyiv date.
+- [x] DOM, Tab и visual order используют email перед HomePage.
+- [x] UserName, HomePage и email используют fixed `10ch` slots с обрезкой до 10 Unicode code points без ellipsis.
+- [x] Короткие userName, HomePage/placeholder и email выровнены вправо внутри своих `10ch` slots.
+- [x] UserName, HomePage и email Copy actions используют одинаковые fixed action columns.
+- [x] Отсутствующий HomePage сохраняет muted `[HomePage]` и визуальную noninteractive muted Copy plaque в fixed action cell.
+- [x] Attachment использует fixed `10ch` text slot и fixed action column для active Paperclip button или muted noninteractive plaque.
+- [x] Active attachment отображается парой `Attachment` text + accessible Paperclip action без прямой навигации.
+- [x] Отсутствующий attachment отображается muted парой `Attachment` text + decorative Paperclip plaque без action.
+- [x] Active и placeholder icon plaques используют общую geometry; decorative placeholders исключены из Tab order и accessibility tree.
+- [x] Active и muted Copy icons полностью borderless; active hover меняет только icon color.
+- [x] Active и muted Paperclip icons полностью borderless; active hover меняет только icon color.
+- [x] HomePage и attachment placeholders остаются metadata hit-testing zones и не пропускают click в Post open surface.
+- [x] PublishDate использует fixed `16ch` column и сохраняет Kyiv formatter без `margin-left: auto`.
+- [x] Date column следует непосредственно за Paperclip action без flexible spacer; полный Kyiv timestamp не обрезается implementation layout.
+- [x] Одна grid schema сохраняет metadata alignment для всех PostCard одного depth; `depth * 20px` сдвигает карточку целиком, не меняя её внутренние колонки.
+- [x] Individual nullable optional values не вызывают layout shift; будущий global field selection может менять schema только для всех карточек одновременно.
+- [ ] PARTIAL — visual parity active/placeholder plaques и placeholder click isolation требуют browser verification; in-app browser недоступен в текущей сессии.
+- [ ] PARTIAL — pixel-level vertical alignment across root Posts and equal-depth replies requires browser verification; in-app browser is unavailable in the current session.
 
 - [ ] Avatar click открывает AvatarPreview modal.
 - [x] UserName показывает первые 10 Unicode code points без изменения source value.
@@ -1002,10 +1028,17 @@ Frontend должен обеспечивать:
 - [x] Email показывает первые 10 Unicode code points и копируется полностью без `mailto:`.
 - [x] Attachment button открывает единый AttachmentPreview modal без прямой навигации.
 - [x] Copy и attachment controls имеют hover/focus blue border, `250ms` transition, pointer cursor и keyboard semantics.
-- [ ] Links внутри message не должны открывать ReadAndReply modal.
+- [x] Compact message preview не перехватывает pointer events и не выполняет link navigation.
 - [ ] Внешним ссылкам добавить безопасные `rel` attributes.
 
 ## Safe HTML
+
+- [x] Shared root/reply composer renders one allowed-tag toolbar directly below the message textarea.
+- [x] Toolbar inserts `a[href,title]`, `strong`, `i` and `code` templates at the current caret.
+- [x] Selected message text is wrapped without changing its content.
+- [x] Textarea focus and caret/inner selection are restored after the React Hook Form update.
+- [x] Toolbar updates `message` through React Hook Form with dirty, touched and validation state enabled.
+- [ ] PARTIAL — visual PostCard trim and toolbar caret/selection behavior require browser verification; in-app browser is unavailable in the current session.
 
 - [ ] Создать `SafeMessageHtml`.
 - [ ] Повторно санитизировать backend HTML через DOMPurify перед render.
@@ -1017,19 +1050,20 @@ Frontend должен обеспечивать:
 
 # 26. Read and Reply modal
 
-- [ ] Верхняя часть показывает полный выбранный Post.
-- [ ] Показать полный sanitized message.
-- [ ] Показать выбранные author fields.
-- [ ] Показать attachment control.
-- [ ] Нижняя часть содержит Reply form.
-- [ ] Показать разрешённые HTML tags.
-- [ ] Reply form использует собственные userName/email/homePage.
-- [ ] Reply form не копирует автоматически автора parent Post.
-- [ ] Reply form получает новую CAPTCHA.
-- [ ] Reply attachment необязателен.
-- [ ] После создания reply точечно встроить node.
-- [ ] Не перезапрашивать всё дерево.
-- [ ] Если выбранный Post исчез/не найден, показать controlled 404 state.
+- [x] При открытии выполнить один abortable point `getPost(postId)` с loading/error/Retry/404 states.
+- [x] Верхняя часть показывает полный актуальный выбранный Post и cached content только для того же ID.
+- [x] Показать полный sanitized message без ellipsis.
+- [x] Показать author fields, attachment indicator и Kyiv publishDate.
+- [x] Anonymous может читать Post и получает рабочую `Log in to answer` action без CAPTCHA request.
+- [x] Нижняя часть содержит shared Reply form только для authenticated Session.
+- [x] Reply form использует собственные userName/email/homePage и не копирует автора parent Post.
+- [x] Reply form переиспользует CAPTCHA lifecycle и optional shared attachment flow.
+- [x] После `createPost 201` выполнить point `getPost` и normalized `upsertPost`.
+- [x] Child upsert не меняет `rootIds`, cursor или `hasMore` и не перезапрашивает дерево.
+- [x] Если выбранный Post исчез/не найден, показать `Post is no longer available`.
+- [x] Enrichment failure переиспользует root policy без повторного create command.
+- [ ] PARTIAL — anonymous/authenticated modal flow, real reply/nested reply, focus return и `20px`/`40px` runtime требуют browser verification; in-app browser недоступен.
+- [ ] PARTIAL — full-card hover/click isolation и opaque Read & Answer modal исправлены статически; повторная browser-проверка пользователя требуется.
 
 ---
 

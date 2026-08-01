@@ -6,7 +6,7 @@ import type { CreatePostValues } from "./create-post-schema";
 type CreatePostRequest = components["schemas"]["CreatePostDto"];
 type ErrorResponse = components["schemas"]["ErrorResponseDto"];
 
-export type CreateRootPostResult =
+export type CreatePostResult =
   | { post: PostViewModel; status: "created" }
   | { postId: string; status: "created-without-enrichment" }
   | {
@@ -16,15 +16,16 @@ export type CreateRootPostResult =
       status: "error";
     };
 
-interface CreateRootPostOptions {
+interface CreatePostOptions {
   attachmentFileId?: string;
   captchaId: string;
   client: RestClient;
+  parentId?: string;
   values: CreatePostValues;
 }
 
 function normalizeError(error: ErrorResponse | undefined): Omit<
-  Extract<CreateRootPostResult, { status: "error" }>,
+  Extract<CreatePostResult, { status: "error" }>,
   "status"
 > {
   return {
@@ -34,12 +35,13 @@ function normalizeError(error: ErrorResponse | undefined): Omit<
   };
 }
 
-export async function createRootPost({
+export async function createPost({
   attachmentFileId,
   captchaId,
   client,
+  parentId,
   values,
-}: CreateRootPostOptions): Promise<CreateRootPostResult> {
+}: CreatePostOptions): Promise<CreatePostResult> {
   const body = {
     ...(attachmentFileId ? { attachmentFileId } : {}),
     captchaId,
@@ -47,6 +49,7 @@ export async function createRootPost({
     email: values.email,
     ...(values.homePage ? { homePage: values.homePage } : {}),
     message: values.message,
+    ...(parentId ? { parentId } : {}),
     userName: values.userName,
   } satisfies CreatePostRequest;
 

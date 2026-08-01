@@ -104,7 +104,7 @@ select {
   justify-content: center;
   gap: 0.375rem;
   border: 1px solid var(--color-graphite);
-  background: transparent;
+  background: var(--color-background-primary);
   color: var(--color-graphite);
   cursor: pointer;
   transition:
@@ -157,7 +157,7 @@ select {
   height: 2rem;
   padding: 0;
   border: 1px solid transparent;
-  background: transparent;
+  background: var(--color-background-primary);
   color: var(--color-graphite);
   cursor: pointer;
   place-items: center;
@@ -202,6 +202,34 @@ select {
   min-height: 6rem;
   padding-block: 0.5rem;
   resize: vertical;
+}
+
+.message-tag-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.message-tag-button {
+  min-height: 2rem;
+  padding: 0 0.5rem;
+  border: 1px solid var(--color-graphite);
+  background: var(--color-background-primary);
+  color: var(--color-graphite);
+  cursor: pointer;
+  font-size: var(--text-xs);
+  transition: border-color var(--default-transition-duration);
+}
+
+.message-tag-button:hover,
+.message-tag-button:focus-visible {
+  border-color: var(--color-active-blue);
+}
+
+.message-tag-button:disabled {
+  border-color: var(--color-background-secondary);
+  color: var(--color-background-secondary);
+  cursor: not-allowed;
 }
 
 .captcha-challenge {
@@ -327,38 +355,60 @@ select {
 }
 
 .post-card {
+  --post-card-inline-trim: 2.25rem;
+  --post-metadata-avatar-slot: 2rem;
+  --post-metadata-text-slot: 10ch;
+  --post-metadata-action-slot: 1.75rem;
+  --post-metadata-date-slot: 16ch;
+  --post-metadata-column-gap: 0.25rem;
+  position: relative;
+  isolation: isolate;
   display: grid;
-  min-width: 0;
+  width: calc(50% + 100px - var(--post-card-inline-trim));
+  min-width: calc(38rem + 100px - var(--post-card-inline-trim));
   padding: 0.5rem;
   gap: 0.375rem;
   border: 1px solid var(--color-graphite);
   background: var(--color-background-primary);
   transition: border-color var(--default-transition-duration);
-  width: 50%;
 }
 
 .post-card:hover,
-.post-card:focus-within {
+.post-card:has(.post-open-action:focus-visible) {
   border-color: var(--color-active-blue);
 }
 
 .post-metadata {
-  display: flex;
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns:
+    var(--post-metadata-avatar-slot)
+    var(--post-metadata-text-slot)
+    var(--post-metadata-action-slot)
+    var(--post-metadata-text-slot)
+    var(--post-metadata-action-slot)
+    var(--post-metadata-text-slot)
+    var(--post-metadata-action-slot)
+    var(--post-metadata-text-slot)
+    var(--post-metadata-action-slot)
+    var(--post-metadata-date-slot);
   min-width: 0;
   height: 2rem;
   align-items: center;
-  gap: 0.5rem;
-  overflow: hidden;
+  column-gap: var(--post-metadata-column-gap);
+  overflow: visible;
   white-space: nowrap;
+  pointer-events: none;
 }
 
 .post-avatar {
   display: block;
-  flex: 0 0 2rem;
-  width: 2rem;
+  width: var(--post-metadata-avatar-slot);
   height: 2rem;
   border: 1px solid var(--color-graphite);
   object-fit: cover;
+  pointer-events: auto;
 }
 
 .post-avatar-fallback {
@@ -367,58 +417,84 @@ select {
   place-items: center;
 }
 
-.post-author,
-.post-attachment {
-  flex: 0 0 auto;
+.post-metadata-text {
+  width: var(--post-metadata-text-slot);
+  min-width: 0;
+  overflow: hidden;
+  text-align: right;
+  text-overflow: clip;
+  white-space: nowrap;
+  pointer-events: auto;
 }
 
-.post-metadata-value,
-.post-metadata-placeholder {
-  flex: 0 0 auto;
-}
-
-.post-metadata-pair {
-  display: inline-flex;
-  flex: 0 0 auto;
+.post-metadata-action,
+.post-date-slot {
+  display: grid;
+  min-width: 0;
   align-items: center;
+  justify-items: center;
+  pointer-events: auto;
+}
+
+.post-metadata-action {
+  width: var(--post-metadata-action-slot);
+}
+
+.post-date-slot {
+  width: var(--post-metadata-date-slot);
+  justify-items: end;
+}
+
+.post-metadata-text:empty,
+.post-metadata-action:empty,
+.post-date-slot:empty {
+  pointer-events: none;
 }
 
 .post-metadata-placeholder {
   color: var(--color-background-secondary);
 }
 
-.post-copy-control,
-.post-attachment {
+.post-icon-plaque {
+  appearance: none;
   display: inline-flex;
-  flex: 0 0 auto;
+  width: var(--post-metadata-action-slot);
   height: 1.75rem;
-  padding: 0 0.25rem;
-  border: 1px solid transparent;
+  padding: 0;
+  border: 0;
   align-items: center;
   justify-content: center;
-  gap: 0.25rem;
   background: transparent;
-  color: var(--color-graphite);
-  cursor: pointer;
-  transition: border-color var(--default-transition-duration);
+  box-shadow: none;
 }
 
-.post-copy-control {
-  width: 1.75rem;
+.post-copy-control,
+.post-attachment {
+  color: var(--color-graphite);
+  cursor: pointer;
+  transition: color var(--default-transition-duration);
+  pointer-events: auto;
+}
+
+.post-icon-plaque-placeholder {
+  color: var(--color-background-secondary);
+  cursor: default;
+  pointer-events: auto;
 }
 
 .post-copy-control:hover,
 .post-copy-control:focus-visible,
 .post-attachment:hover,
 .post-attachment:focus-visible {
-  border-color: var(--color-active-blue);
+  color: var(--color-active-blue);
 }
 
 .post-metadata time {
-  flex: 0 0 auto;
-  margin-left: auto;
   color: var(--color-background-secondary);
   font-size: var(--text-xs);
+  text-align: right;
+  white-space: nowrap;
+  pointer-events: auto;
 }
 
 .attachment-preview-image-area {
@@ -458,10 +534,94 @@ select {
 }
 
 .post-message {
+  z-index: 1;
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  pointer-events: none;
+}
+
+.post-open-action {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  padding: 0;
+  border: 1px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  transition: border-color var(--default-transition-duration);
+}
+
+.post-interaction {
+  display: grid;
+  max-height: calc(100vh - 8rem);
+  gap: 1rem;
+  overflow-y: auto;
+  background: var(--color-background-primary);
+}
+
+.post-read-section,
+.post-answer-section {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.post-answer-section {
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-graphite);
+}
+
+.post-read-section,
+.post-answer-section,
+.login-form,
+.registration-form,
+.create-post-form,
+.captcha-challenge,
+.attachment-preview {
+  background: var(--color-background-primary);
+}
+
+.post-read-metadata {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 0.5rem;
+  overflow-wrap: anywhere;
+}
+
+.post-read-metadata time {
+  flex: 0 0 auto;
+  margin-left: auto;
+  color: var(--color-background-secondary);
+  font-size: var(--text-xs);
+  white-space: nowrap;
+}
+
+.post-read-attachment {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.post-full-message {
+  max-height: 40vh;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.post-answer-notice,
+.post-read-error {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.dialog-content:has(.post-interaction) {
+  width: min(50rem, calc(100vw - 2rem));
+  max-height: calc(100vh - 2rem);
 }
 
 .feed-state,
@@ -488,6 +648,7 @@ select {
 
 .dialog-overlay {
   position: fixed;
+  z-index: 10;
   inset: 0;
   display: grid;
   padding: 1rem;
@@ -507,6 +668,8 @@ select {
 }
 
 .dialog-content {
+  position: relative;
+  z-index: 1;
   width: 32rem;
   padding: 1rem;
   border: 1px solid var(--color-graphite);
@@ -539,7 +702,7 @@ select {
   height: 2rem;
   padding: 0;
   border: 1px solid transparent;
-  background: transparent;
+  background: var(--color-background-primary);
   color: var(--color-graphite);
   cursor: pointer;
   place-items: center;

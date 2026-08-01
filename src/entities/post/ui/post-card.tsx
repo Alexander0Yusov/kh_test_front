@@ -1,6 +1,6 @@
 "use client";
 
-import { Paperclip, UserRound } from "lucide-react";
+import { Copy, Paperclip, UserRound } from "lucide-react";
 import Image from "next/image";
 import { useMemo, useState } from "react";
 
@@ -12,6 +12,25 @@ import { CopyMetadataButton } from "./copy-metadata-button";
 
 interface PostAvatarProps {
   url?: string | null;
+}
+
+interface MetadataIconPlaceholderProps {
+  icon: "attachment" | "copy";
+}
+
+function MetadataIconPlaceholder({ icon }: MetadataIconPlaceholderProps) {
+  return (
+    <span
+      aria-hidden="true"
+      className="post-icon-plaque post-icon-plaque-placeholder"
+    >
+      {icon === "copy" ? (
+        <Copy size={14} />
+      ) : (
+        <Paperclip size={16} />
+      )}
+    </span>
+  );
 }
 
 function PostAvatar({ url }: PostAvatarProps) {
@@ -51,6 +70,7 @@ function getSafeExternalUrl(value: string | null | undefined): string | null {
 
 interface PostCardProps {
   onAttachmentPreview: AttachmentPreviewRequest;
+  onPostInteraction: PostInteractionRequest;
   post: PostViewModel;
 }
 
@@ -59,7 +79,12 @@ export type AttachmentPreviewRequest = (
   trigger: HTMLButtonElement,
 ) => void;
 
-export function PostCard({ onAttachmentPreview, post }: PostCardProps) {
+export type PostInteractionRequest = (
+  postId: string,
+  trigger: HTMLButtonElement,
+) => void;
+
+export function PostCard({ onAttachmentPreview, onPostInteraction, post }: PostCardProps) {
   const publishDate = formatPublishDate(post.publishDate);
   const attachmentUrl = getSafeExternalUrl(post.attachmentUrl);
   const homePage = getSafeExternalUrl(post.homePage);
@@ -73,57 +98,100 @@ export function PostCard({ onAttachmentPreview, post }: PostCardProps) {
     <article className="post-card">
       <div className="post-metadata">
         <PostAvatar key={post.avatarUrl ?? "fallback"} url={post.avatarUrl} />
-        <span className="post-metadata-pair">
-          <strong className="post-author">{formatPostMetadataPreview(post.userName)}</strong>
+        <strong className="post-author post-metadata-text">
+          {formatPostMetadataPreview(post.userName)}
+        </strong>
+        <span className="post-metadata-action">
           <CopyMetadataButton
             accessibleLabel="Copy user name"
             successMessage="User name copied."
             value={post.userName}
           />
         </span>
-        {homePage ? (
-          <span className="post-metadata-pair">
-            <span className="post-metadata-value">{formatPostMetadataPreview(post.homePage ?? "")}</span>
-            <CopyMetadataButton
-              accessibleLabel="Copy home page"
-              successMessage="Home page copied."
-              value={post.homePage ?? ""}
-            />
-          </span>
-        ) : (
-          <span className="post-metadata-placeholder">[HomePage]</span>
-        )}
-        {post.email ? (
-          <span className="post-metadata-pair">
-            <span className="post-metadata-value">{formatPostMetadataPreview(post.email)}</span>
+        <span
+          aria-hidden={post.email ? undefined : true}
+          className="post-metadata-text"
+        >
+          {post.email ? formatPostMetadataPreview(post.email) : null}
+        </span>
+        <span
+          aria-hidden={post.email ? undefined : true}
+          className="post-metadata-action"
+        >
+          {post.email ? (
             <CopyMetadataButton
               accessibleLabel="Copy email"
               successMessage="Email copied."
               value={post.email}
             />
+          ) : null}
+        </span>
+        {homePage ? (
+          <span className="post-metadata-text">
+            {formatPostMetadataPreview(post.homePage ?? "")}
           </span>
-        ) : null}
-        {attachmentUrl ? (
-          <button
-            aria-label="Preview attachment"
-            className="post-attachment"
-            onClick={(event) => {
-              event.stopPropagation();
-              onAttachmentPreview(post.id, event.currentTarget);
-            }}
-            type="button"
-          >
-            <Paperclip aria-hidden="true" size={16} />
-            Attachment
-          </button>
-        ) : null}
-        {publishDate && typeof post.publishDate === "string" ? (
-          <time dateTime={post.publishDate}>{publishDate}</time>
-        ) : null}
+        ) : (
+          <span className="post-metadata-placeholder post-metadata-text">[HomePage]</span>
+        )}
+        <span
+          aria-hidden={homePage ? undefined : true}
+          className="post-metadata-action"
+        >
+          {homePage ? (
+            <CopyMetadataButton
+              accessibleLabel="Copy home page"
+              successMessage="Home page copied."
+              value={post.homePage ?? ""}
+            />
+          ) : (
+            <MetadataIconPlaceholder icon="copy" />
+          )}
+        </span>
+        <span
+          className={attachmentUrl
+            ? "post-metadata-text"
+            : "post-metadata-placeholder post-metadata-text"}
+        >
+          Attachment
+        </span>
+        <span
+          aria-hidden={attachmentUrl ? undefined : true}
+          className="post-metadata-action"
+        >
+          {attachmentUrl ? (
+            <button
+              aria-label="Preview attachment"
+              className="post-attachment post-icon-plaque"
+              onClick={(event) => {
+                event.stopPropagation();
+                onAttachmentPreview(post.id, event.currentTarget);
+              }}
+              type="button"
+            >
+              <Paperclip aria-hidden="true" size={16} />
+            </button>
+          ) : (
+            <MetadataIconPlaceholder icon="attachment" />
+          )}
+        </span>
+        <span
+          aria-hidden={publishDate ? undefined : true}
+          className="post-date-slot"
+        >
+          {publishDate && typeof post.publishDate === "string" ? (
+            <time dateTime={post.publishDate}>{publishDate}</time>
+          ) : null}
+        </span>
       </div>
       <div
         className="post-message"
         dangerouslySetInnerHTML={{ __html: sanitizedMessage }}
+      />
+      <button
+        aria-label={`Read and answer post by ${post.userName}`}
+        className="post-open-action"
+        onClick={(event) => onPostInteraction(post.id, event.currentTarget)}
+        type="button"
       />
     </article>
   );

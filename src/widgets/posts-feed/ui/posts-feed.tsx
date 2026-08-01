@@ -5,6 +5,7 @@ import { useEffect, useRef } from "react";
 import {
   type AttachmentPreviewRequest,
   PostCard,
+  type PostInteractionRequest,
   type PostTreeRow,
   type PostsRequestStatus,
 } from "@/entities/post";
@@ -15,12 +16,13 @@ interface PostsFeedProps {
   hasMore: boolean;
   onAttachmentPreview: AttachmentPreviewRequest;
   onLoadMore: () => void;
+  onPostInteraction: PostInteractionRequest;
   onRetry: () => void;
   rows: PostTreeRow[];
   status: PostsRequestStatus;
 }
 
-export function PostsFeed({ error, hasMore, onAttachmentPreview, onLoadMore, onRetry, rows, status }: PostsFeedProps) {
+export function PostsFeed({ error, hasMore, onAttachmentPreview, onLoadMore, onPostInteraction, onRetry, rows, status }: PostsFeedProps) {
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -48,7 +50,7 @@ export function PostsFeed({ error, hasMore, onAttachmentPreview, onLoadMore, onR
       <div className="post-tree" role="tree">
         {rows.map(({ depth, post }) => (
           <div aria-level={depth + 1} aria-selected="false" className="post-tree-row" key={post.id} role="treeitem" style={{ marginInlineStart: `calc(${depth} * var(--post-tree-indent))` }}>
-            <PostCard onAttachmentPreview={onAttachmentPreview} post={post} />
+            <PostCard onAttachmentPreview={onAttachmentPreview} onPostInteraction={onPostInteraction} post={post} />
           </div>
         ))}
       </div>

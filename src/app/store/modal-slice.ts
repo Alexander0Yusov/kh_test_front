@@ -1,14 +1,16 @@
 import type { StateCreator } from "zustand";
 
-export type ModalKind = "attachmentPreview" | "createRootPost" | "login" | "register" | null;
+export type ModalKind = "attachmentPreview" | "createRootPost" | "login" | "postInteraction" | "register" | null;
 
 export interface ModalSlice {
   closeModal: () => void;
   attachmentPreviewPostId: string | null;
+  postInteractionPostId: string | null;
   modal: ModalKind;
   openLogin: () => void;
   openAttachmentPreview: (postId: string) => void;
   openCreateRootPost: () => void;
+  openPostInteraction: (postId: string) => void;
   openRegister: () => void;
 }
 
@@ -19,20 +21,24 @@ export const createModalSlice: StateCreator<
   ModalSlice
 > = (set) => ({
   closeModal: () => {
-    set({ attachmentPreviewPostId: null, modal: null });
+    set({ attachmentPreviewPostId: null, modal: null, postInteractionPostId: null });
   },
   attachmentPreviewPostId: null,
   modal: null,
+  postInteractionPostId: null,
   openLogin: () => {
-    set({ attachmentPreviewPostId: null, modal: "login" });
+    set({ attachmentPreviewPostId: null, modal: "login", postInteractionPostId: null });
   },
   openAttachmentPreview: (postId) => {
-    set({ attachmentPreviewPostId: postId, modal: "attachmentPreview" });
+    set({ attachmentPreviewPostId: postId, modal: "attachmentPreview", postInteractionPostId: null });
   },
   openCreateRootPost: () => {
-    set({ attachmentPreviewPostId: null, modal: "createRootPost" });
+    set({ attachmentPreviewPostId: null, modal: "createRootPost", postInteractionPostId: null });
+  },
+  openPostInteraction: (postId) => {
+    set({ attachmentPreviewPostId: null, modal: "postInteraction", postInteractionPostId: postId });
   },
   openRegister: () => {
-    set({ attachmentPreviewPostId: null, modal: "register" });
+    set({ attachmentPreviewPostId: null, modal: "register", postInteractionPostId: null });
   },
 });

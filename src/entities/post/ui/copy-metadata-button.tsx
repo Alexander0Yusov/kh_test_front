@@ -37,7 +37,7 @@ export function CopyMetadataButton({
   return (
     <button
       aria-label={accessibleLabel}
-      className="post-copy-control"
+      className="post-copy-control post-icon-plaque"
       onClick={(event) => {
         event.stopPropagation();
         void copy();

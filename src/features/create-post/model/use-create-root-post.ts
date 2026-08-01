@@ -13,16 +13,17 @@ import {
   type CreatePostValues,
   createPostSchema,
 } from "./create-post-schema";
-import { createRootPost } from "./create-root-post";
+import { createPost } from "./create-root-post";
 import { usePostCaptcha } from "./use-post-captcha";
 
-interface UseCreateRootPostOptions {
+interface UseCreatePostOptions {
   client: RestClient;
   isAuthenticated: boolean;
   onCreated: (post: PostViewModel) => void;
   onCreatedWithoutEnrichment: () => void;
   onSuccess: () => void;
   onUnauthorized: () => void;
+  parentId?: string;
   uploadAttachment: () => Promise<string | undefined>;
 }
 
@@ -38,15 +39,16 @@ function isCreatePostField(value: string): value is keyof CreatePostFormInput {
   return CREATE_POST_FIELDS.has(value);
 }
 
-export function useCreateRootPost({
+export function useCreatePost({
   client,
   isAuthenticated,
   onCreated,
   onCreatedWithoutEnrichment,
   onSuccess,
   onUnauthorized,
+  parentId,
   uploadAttachment,
-}: UseCreateRootPostOptions) {
+}: UseCreatePostOptions) {
   const captcha = usePostCaptcha(client);
   const form = useForm<CreatePostFormInput, unknown, CreatePostValues>({
     defaultValues: {
@@ -99,10 +101,11 @@ export function useCreateRootPost({
     }
 
     try {
-      const result = await createRootPost({
+      const result = await createPost({
         attachmentFileId,
         captchaId,
         client,
+        parentId,
         values,
       });
 
@@ -110,7 +113,7 @@ export function useCreateRootPost({
         onCreated(result.post);
         form.reset();
         onSuccess();
-        toast.success("Message created.");
+        toast.success(parentId ? "Reply created." : "Message created.");
         return;
       }
 
@@ -119,7 +122,9 @@ export function useCreateRootPost({
         onCreatedWithoutEnrichment();
         onSuccess();
         toast.warning(
-          "Message created, but the feed could not be updated. Reloading the feed.",
+          parentId
+            ? "Reply was created, but the feed could not be updated. Reloading the feed."
+            : "Message created, but the feed could not be updated. Reloading the feed.",
         );
         return;
       }
