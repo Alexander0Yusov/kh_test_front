@@ -1,28 +1,37 @@
-import createClient, { type Client } from "openapi-fetch";
+import createClient, { type Client, type Middleware } from "openapi-fetch";
 
 import type { paths } from "./generated/openapi";
-import { validateBackendUrl } from "../config";
+import { getRestApiBaseUrl } from "../config";
 
 export interface CreateRestClientOptions {
-  accessToken?: string;
   backendUrl: string;
+  getAccessToken?: () => string | undefined;
 }
 
 export type RestClient = Client<paths>;
 
 export function createRestClient({
-  accessToken,
   backendUrl,
+  getAccessToken,
 }: CreateRestClientOptions): RestClient {
-  const headers = accessToken
-    ? {
-        Authorization: `Bearer ${accessToken}`,
-      }
-    : undefined;
-
-  return createClient<paths>({
-    baseUrl: validateBackendUrl(backendUrl),
+  const client = createClient<paths>({
+    baseUrl: getRestApiBaseUrl(backendUrl),
     credentials: "include",
-    headers,
   });
+
+  const authenticationMiddleware: Middleware = {
+    onRequest({ request }) {
+      const accessToken = getAccessToken?.();
+
+      if (accessToken) {
+        request.headers.set("Authorization", `Bearer ${accessToken}`);
+      }
+
+      return request;
+    },
+  };
+
+  client.use(authenticationMiddleware);
+
+  return client;
 }

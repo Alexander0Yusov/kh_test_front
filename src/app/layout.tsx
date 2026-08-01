@@ -3,6 +3,7 @@ import { Nunito } from "next/font/google";
 import type { ReactNode } from "react";
 
 import "./globals.css";
+import { ApplicationProviders } from "./providers/application-providers";
 
 const nunito = Nunito({
   display: "swap",
@@ -24,7 +25,9 @@ export default function RootLayout({
 }: Readonly<RootLayoutProps>) {
   return (
     <html className={nunito.variable} lang="ru">
-      <body>{children}</body>
+      <body>
+        <ApplicationProviders>{children}</ApplicationProviders>
+      </body>
     </html>
   );
 }

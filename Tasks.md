@@ -55,31 +55,31 @@ Frontend должен обеспечивать:
 - [x] Использовать Next.js App Router.
 - [x] Использовать React и TypeScript в strict mode.
 - [x] Использовать Server Components по умолчанию.
-- [ ] Добавлять `"use client"` только интерактивным компонентам и providers.
+- [x] Добавлять `"use client"` только интерактивным компонентам и providers.
 - [x] Не превращать всё приложение в один глобальный Client Component.
-- [ ] Основной интерактивный экран реализовать как client workspace внутри серверного layout/page.
+- [x] Основной интерактивный экран реализовать как client workspace внутри серверного layout/page.
 - [ ] Настроить standalone production build Next.js.
 
 ## State management
 
-- [ ] Использовать Zustand.
-- [ ] Использовать slice policy.
-- [ ] Каждый slice должен отвечать за отдельную область состояния.
-- [ ] Не хранить вычисляемые данные, если их можно получить selector-функцией.
-- [ ] Не хранить access token в `localStorage`.
-- [ ] Не хранить refresh token в JavaScript-доступном хранилище.
+- [x] Использовать Zustand.
+- [x] Использовать slice policy.
+- [x] Каждый slice должен отвечать за отдельную область состояния.
+- [x] Не хранить вычисляемые данные, если их можно получить selector-функцией.
+- [x] Не хранить access token в `localStorage`.
+- [x] Не хранить refresh token в JavaScript-доступном хранилище.
 
 ## UI
 
-- [ ] Использовать Radix UI Primitives для готовых accessible-решений.
-- [ ] Использовать Radix Dialog для модальных окон.
+- [x] Использовать Radix UI Primitives для готовых accessible-решений.
+- [x] Использовать Radix Dialog для модальных окон.
 - [ ] Использовать Radix Checkbox для выбора GraphQL-полей.
 - [ ] Использовать Radix RadioGroup или ToggleGroup для сортировки и направления.
 - [ ] Использовать Radix Collapsible для управляемого состояния sidebar.
 - [ ] Использовать Radix ScrollArea там, где он не конфликтует с Infinite Scroll.
 - [ ] Использовать Radix Avatar, Tooltip и Separator по необходимости.
-- [ ] Использовать `lucide-react` для иконок.
-- [ ] Использовать Sonner для toast-уведомлений.
+- [x] Использовать `lucide-react` для иконок.
+- [x] Использовать Sonner для toast-уведомлений.
 
 ## Styling
 
@@ -94,12 +94,12 @@ Frontend должен обеспечивать:
 
 ## Forms and validation
 
-- [ ] Использовать React Hook Form.
-- [ ] Использовать Zod.
-- [ ] Использовать `@hookform/resolvers`.
-- [ ] Создать отдельную Zod schema для каждой формы.
-- [ ] Ошибки формы показывать около соответствующих полей.
-- [ ] Серверные ошибки сопоставлять с полями формы по `field`, если backend его возвращает.
+- [x] Использовать React Hook Form.
+- [x] Использовать Zod.
+- [x] Использовать `@hookform/resolvers`.
+- [x] Создать отдельную Zod schema для каждой формы.
+- [x] Ошибки формы показывать около соответствующих полей.
+- [x] Серверные ошибки сопоставлять с полями формы по `field`, если backend его возвращает.
 
 ## Contracts
 
@@ -180,18 +180,18 @@ Frontend должен обеспечивать:
 
 ## Auth contract
 
-- [ ] Login body содержит только `email` и `password`.
-- [ ] Login response содержит только `accessToken`.
-- [ ] Refresh token принимается и возвращается только через HttpOnly cookie.
-- [ ] Все auth-запросы выполнять с `credentials: "include"`.
-- [ ] Access token хранить только в памяти Zustand.
-- [ ] Access token передавать как `Authorization: Bearer <token>`.
+- [x] Login body содержит только `email` и `password`.
+- [x] Login response содержит только `accessToken`.
+- [x] Refresh token принимается и возвращается только через HttpOnly cookie.
+- [x] Все auth-запросы выполнять с `credentials: "include"`.
+- [x] Access token хранить только в памяти Zustand.
+- [x] Access token передавать как `Authorization: Bearer <token>`.
 - [ ] После перезагрузки страницы восстанавливать авторизацию через refresh.
 - [ ] После refresh получать `/api/users/me`.
 - [ ] При окончательном `401` очищать auth state.
-- [ ] Не показывать пользователю Session metadata.
-- [ ] Не запрашивать у пользователя `deviceId`, `deviceName` или IP.
-- [ ] Не декодировать JWT как источник полномочий.
+- [x] Не показывать пользователю Session metadata.
+- [x] Не запрашивать у пользователя `deviceId`, `deviceName` или IP.
+- [x] Не декодировать JWT как источник полномочий.
 - [ ] Серверная проверка token/session остаётся источником истины.
 
 ## User contract
@@ -324,9 +324,9 @@ Frontend должен обеспечивать:
 - [x] Подключить Nunito через `next/font`.
 - [x] Настроить metadata приложения.
 - [x] Создать root layout.
-- [ ] Создать client providers boundary.
-- [ ] Подключить Toaster один раз в providers.
-- [ ] Подключить ModalHost один раз в providers.
+- [x] Создать client providers boundary.
+- [x] Подключить Toaster один раз в providers.
+- [x] Подключить ModalHost один раз в providers.
 - [x] Не обращаться к `window`, `localStorage` и WebSocket во время SSR.
 - [x] Исключить hydration mismatch.
 
@@ -338,8 +338,8 @@ Frontend должен обеспечивать:
 - [x] Валидировать `BACKEND_URL` как абсолютный HTTP/HTTPS URL.
 - [x] Создать Route Handler для выдачи browser runtime config.
 - [x] Возвращать только публично допустимые параметры.
-- [ ] Создать `useRuntimeConfig`.
-- [ ] Заблокировать API initialization до загрузки runtime config.
+- [x] Создать типизированное client-side получение runtime config.
+- [x] Заблокировать API initialization до загрузки runtime config.
 - [x] Показать контролируемую ошибку startup, если config недоступен.
 - [x] Не выводить secrets в runtime config.
 - [x] Не хранить backend URL в нескольких файлах.
@@ -409,7 +409,7 @@ Frontend должен обеспечивать:
 ## Header
 
 - [ ] Реализовать фиксированный header.
-- [ ] Слева разместить логотип `Test Task`.
+- [x] Слева разместить логотип `Test Task`.
 - [ ] Рядом с логотипом разместить `Erase All`.
 - [ ] В центре разместить `Create Message`.
 - [ ] Справа зарезервировать три стабильных места:
@@ -417,7 +417,7 @@ Frontend должен обеспечивать:
   - `Register`;
   - `Log Out`.
 - [ ] Для анонимного пользователя активны Login/Register.
-- [ ] Для авторизованного пользователя активен Log Out.
+- [x] Для авторизованного пользователя активен Log Out.
 - [ ] Не выполнять невалидные действия скрытыми обработчиками.
 - [ ] `Create Message` требует авторизацию.
 - [ ] Если анонимный пользователь нажал Create Message, открыть Login modal и показать понятное уведомление.
@@ -513,22 +513,16 @@ Frontend должен обеспечивать:
 
 # 11. Zustand architecture
 
-## Auth slice
+## Session slice
 
-- [ ] Создать `authSlice`.
-- [ ] Поля:
-  - `status: "idle" | "restoring" | "authenticated" | "anonymous"`;
+- [x] Создать `sessionSlice`.
+- [x] Поля:
+  - `status: "idle" | "restoring" | "authenticated" | "anonymous" | "error"`;
   - `accessToken`;
   - `currentUser`;
   - `error`.
-- [ ] Actions:
-  - restoreSession;
-  - login;
-  - registerCompleted;
-  - refresh;
-  - logout;
-  - clearAuth.
-- [ ] Не хранить refresh token.
+- [x] Actions: `beginRestore`, `setAuthenticated`, `setAnonymous`, `setSessionError`, `clearSession`.
+- [x] Не хранить refresh token.
 
 ## Posts slice
 
@@ -564,11 +558,11 @@ Frontend должен обеспечивать:
 - [ ] Не считать перестановку одинаковых fields новым набором.
 - [ ] Синхронизировать slice с `useLocalStorage`.
 
-## UI slice
+## Modal slice
 
-- [ ] Создать `uiSlice`.
-- [ ] Хранить modal descriptor и modal context.
-- [ ] Поддержать modal kinds:
+- [x] Создать минимальный `modalSlice`.
+- [x] Поддержать только закрытое состояние и `Login` в текущем срезе.
+- [ ] В будущих срезах добавить modal kinds:
   - Login;
   - Register;
   - CreateRootPost;
@@ -637,30 +631,30 @@ Frontend должен обеспечивать:
 
 # 13. JWT and session flow
 
-- [ ] При первом client mount выполнить один controlled restore flow.
-- [ ] Отправить refresh request с credentials.
+- [x] При первом client mount выполнить один controlled restore flow.
+- [x] Отправить refresh request с credentials.
 - [ ] При успехе сохранить новый access token только в памяти.
 - [ ] После этого получить `/api/users/me`.
-- [ ] Не показывать authenticated UI до завершения restore.
+- [x] Не показывать authenticated UI до завершения restore.
 - [ ] Создать auth-aware REST wrapper.
 - [ ] Добавлять access token только к защищённым запросам.
 - [ ] При `401` выполнить не более одной согласованной refresh-попытки.
 - [ ] Параллельные `401` должны ожидать один общий refresh promise.
 - [ ] После успешного refresh повторить исходный запрос один раз.
 - [ ] После неуспешного refresh очистить auth state.
-- [ ] Не создавать refresh loop.
-- [ ] Logout вызывает backend logout с credentials.
+- [x] Не создавать refresh loop.
+- [x] Logout вызывает backend logout с credentials.
 - [ ] После logout очистить access token, currentUser и закрыть защищённые формы.
 - [ ] После logout публичный feed продолжает работать.
-- [ ] В toast не показывать токены или технические Session metadata.
+- [x] В toast не показывать токены или технические Session metadata.
 
 ---
 
 # 14. Unified modal system
 
-- [ ] Создать один `ModalHost`.
-- [ ] Использовать Radix Dialog.
-- [ ] ModalHost принимает modal kind и context.
+- [x] Создать один `ModalHost`.
+- [x] Использовать Radix Dialog.
+- [x] ModalHost принимает текущий modal kind.
 - [ ] Внутри одного shell рендерить разные формы.
 - [ ] Поддержать регистрацию, login, создание root, чтение/reply и file preview.
 - [ ] Закрывать modal:
@@ -668,12 +662,12 @@ Frontend должен обеспечивать:
   - по Escape;
   - по ЛКМ на backdrop;
   - после успешного завершения соответствующего flow.
-- [ ] Backdrop: graphite с opacity 50%.
+- [x] Backdrop: graphite с opacity 50%.
 - [ ] События backdrop не должны проходить к Posts Canvas.
-- [ ] Клики внутри Dialog Content не должны закрывать modal.
-- [ ] Реализовать focus trap.
-- [ ] После закрытия возвращать focus инициирующей кнопке.
-- [ ] Блокировать background interaction.
+- [x] Клики внутри Dialog Content не должны закрывать modal.
+- [ ] PARTIAL — focus trap обеспечен Radix Dialog; полная keyboard runtime-проверка заблокирована недоступной browser-сессией.
+- [x] После закрытия возвращать focus инициирующей кнопке.
+- [ ] PARTIAL — background interaction блокируется modal Radix Dialog; runtime-проверка заблокирована недоступной browser-сессией.
 - [ ] Блокировать background scroll.
 - [ ] Перед закрытием формы с введёнными данными показать подтверждение потери данных.
 - [ ] Не показывать подтверждение для pristine form.
@@ -789,14 +783,14 @@ Frontend должен обеспечивать:
 
 # 18. Login and Logout
 
-- [ ] Реализовать Login modal.
-- [ ] Поля только email/password.
-- [ ] Выполнять запрос с credentials.
-- [ ] Сохранять access token только в memory state.
-- [ ] Получать current user после login.
+- [ ] PARTIAL — Login modal реализован; invalid/positive submit runtime заблокирован остановленным backend и недоступной browser-сессией.
+- [x] Поля только email/password.
+- [x] Выполнять запрос с credentials.
+- [x] Сохранять access token только в memory state.
+- [ ] PARTIAL — получение current user реализовано через generated `/users/me`, positive runtime не выполнен без зарегистрированного User/backend.
 - [ ] Закрывать modal после успеха.
-- [ ] Показывать toast.
-- [ ] Реализовать Logout.
+- [x] Показывать toast.
+- [ ] PARTIAL — Logout реализован; runtime logout flow не выполнен без authenticated Session/backend.
 - [ ] Logout должен очищать backend refresh cookie.
 - [ ] Logout должен очищать auth slice.
 - [ ] Login/Register кнопки не должны требовать лишних Session metadata.
@@ -1256,13 +1250,13 @@ Frontend должен обеспечивать:
 - [x] `pnpm typecheck` проходит.
 - [x] `pnpm lint` проходит.
 - [x] `pnpm build` проходит.
-- [ ] Ручная runtime/browser-проверка critical flow проходит.
+- [ ] PARTIAL — anonymous restore, открытие modal, внутренний click, X и возврат focus проверены; полный browser flow заблокирован недоступной browser-сессией и остановленным backend.
 - [x] `git diff --check` проходит.
 - [x] Generated OpenAPI types актуальны.
 - [ ] Generated GraphQL types актуальны.
 - [x] Нет вручную продублированных backend DTO.
-- [ ] Нет tokens в browser storage.
-- [x] Нет console errors.
+- [x] Нет tokens в browser storage.
+- [ ] PARTIAL — application/hydration errors отсутствуют; ожидаемый HTTP 401 refresh отображался браузером как network console error.
 - [x] Нет React hydration warnings.
 - [ ] Нет незакрытых Socket.IO listeners.
 - [ ] Нет неосвобождённых object URLs.

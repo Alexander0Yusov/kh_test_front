@@ -53,9 +53,16 @@ select {
 .app-header {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   min-height: 3rem;
   padding-inline: 1rem;
   border-bottom: 1px solid var(--color-graphite);
+}
+
+.app-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .app-logo {
@@ -65,6 +72,178 @@ select {
 
 .app-workspace {
   min-height: calc(100vh - 3rem);
+}
+
+.app-status {
+  display: grid;
+  width: var(--container-app);
+  min-height: 100vh;
+  margin-inline: auto;
+  place-content: center;
+  justify-items: center;
+  gap: 1rem;
+}
+
+.session-notice {
+  display: flex;
+  width: var(--container-app);
+  margin-inline: auto;
+  padding: 0.5rem 1rem;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--color-active-blue);
+}
+
+.ui-button {
+  display: inline-flex;
+  min-height: 2rem;
+  padding-inline: 0.75rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  border: 1px solid var(--color-graphite);
+  background: transparent;
+  color: var(--color-graphite);
+  cursor: pointer;
+  transition:
+    border-color var(--default-transition-duration),
+    background-color var(--default-transition-duration);
+}
+
+.ui-button:hover:not(:disabled),
+.ui-button:focus-visible {
+  border-color: var(--color-active-blue);
+}
+
+.ui-button:disabled {
+  border-color: var(--color-background-secondary);
+  color: var(--color-background-secondary);
+  cursor: not-allowed;
+}
+
+.ui-input {
+  width: 100%;
+  min-height: 2rem;
+  padding-inline: 0.5rem;
+  border: 1px solid var(--color-graphite);
+  background: var(--color-background-primary);
+  color: var(--color-graphite);
+  transition: border-color var(--default-transition-duration);
+}
+
+.ui-input:hover,
+.ui-input:focus-visible,
+.ui-input[aria-invalid="true"] {
+  border-color: var(--color-active-blue);
+}
+
+.form-field {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.form-field-label {
+  font-weight: 700;
+}
+
+.form-field-error,
+.form-error {
+  margin: 0;
+  color: var(--color-active-blue);
+  font-size: var(--text-xs);
+}
+
+.login-form {
+  display: grid;
+  gap: 1rem;
+}
+
+.dialog-overlay {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  padding: 1rem;
+  overflow-y: auto;
+  place-items: center;
+  background: color-mix(
+    in srgb,
+    var(--color-graphite) 50%,
+    transparent
+  );
+  opacity: 1;
+  transition: opacity var(--default-transition-duration);
+}
+
+.dialog-overlay[data-state="closed"] {
+  opacity: 0;
+}
+
+.dialog-content {
+  width: 24rem;
+  padding: 1rem;
+  border: 1px solid var(--color-graphite);
+  background: var(--color-background-primary);
+  transform: translateY(0);
+  transition:
+    border-color var(--default-transition-duration),
+    transform var(--default-transition-duration);
+}
+
+.dialog-content[data-state="closed"] {
+  transform: translateY(-0.5rem);
+}
+
+.dialog-header {
+  display: flex;
+  margin-bottom: 1rem;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dialog-title {
+  margin: 0;
+  font-size: var(--text-base);
+}
+
+.dialog-close {
+  display: inline-grid;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--color-graphite);
+  cursor: pointer;
+  place-items: center;
+  transition: border-color var(--default-transition-duration);
+}
+
+.dialog-close:hover,
+.dialog-close:focus-visible {
+  border-color: var(--color-active-blue);
+}
+
+.app-toast {
+  border: 1px solid var(--color-graphite) !important;
+  background: var(--color-background-primary) !important;
+  color: var(--color-graphite) !important;
+  font-family: var(--font-sans), sans-serif !important;
+  font-size: var(--text-sm) !important;
+}
+
+.app-toast-error,
+.app-toast-success {
+  border-left-color: var(--color-active-blue) !important;
+}
+
+.progress-icon {
+  animation: progress-spin 1s linear infinite;
+}
+
+@keyframes progress-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

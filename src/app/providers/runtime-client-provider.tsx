@@ -1,0 +1,122 @@
+"use client";
+
+import {
+  type ReactNode,
+  createContext,
+  use,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+
+import {
+  type RestClient,
+  createRestClient,
+} from "@/shared/api";
+import {
+  type RuntimeConfig,
+  getRuntimeConfig,
+} from "@/shared/config";
+import { Button } from "@/shared/ui/button";
+
+import { useAppStoreApi } from "../store/store-provider";
+
+interface RuntimeClientContextValue {
+  client: RestClient;
+}
+
+type RuntimeClientState =
+  | { status: "loading" }
+  | { message: string; status: "error" }
+  | { client: RestClient; status: "ready" };
+
+const RuntimeClientContext =
+  createContext<RuntimeClientContextValue | null>(null);
+
+interface RuntimeClientProviderProps {
+  children: ReactNode;
+}
+
+export function RuntimeClientProvider({
+  children,
+}: RuntimeClientProviderProps) {
+  const store = useAppStoreApi();
+  const requestRef = useRef<Promise<RuntimeConfig> | null>(null);
+  const [attempt, setAttempt] = useState(0);
+  const [state, setState] = useState<RuntimeClientState>({
+    status: "loading",
+  });
+
+  useEffect(() => {
+    let active = true;
+    requestRef.current ??= getRuntimeConfig();
+
+    void requestRef.current.then(
+      (config) => {
+        if (!active) {
+          return;
+        }
+
+        const client = createRestClient({
+          backendUrl: config.backendUrl,
+          getAccessToken: () => store.getState().accessToken ?? undefined,
+        });
+
+        setState({ client, status: "ready" });
+      },
+      () => {
+        if (active) {
+          setState({
+            message: "Конфигурация приложения недоступна.",
+            status: "error",
+          });
+        }
+      },
+    );
+
+    return () => {
+      active = false;
+    };
+  }, [attempt, store]);
+
+  if (state.status === "loading") {
+    return (
+      <main className="app-status" role="status">
+        Загрузка приложения…
+      </main>
+    );
+  }
+
+  if (state.status === "error") {
+    return (
+      <main className="app-status">
+        <p role="alert">{state.message}</p>
+        <Button
+          onClick={() => {
+            requestRef.current = null;
+            setState({ status: "loading" });
+            setAttempt((value) => value + 1);
+          }}
+        >
+          Повторить
+        </Button>
+      </main>
+    );
+  }
+
+  return (
+    <RuntimeClientContext.Provider value={{ client: state.client }}>
+      {children}
+    </RuntimeClientContext.Provider>
+  );
+}
+
+export function useRuntimeClient(): RestClient {
+  const value = use(RuntimeClientContext);
+
+  if (!value) {
+    throw new Error("RuntimeClientProvider is missing.");
+  }
+
+  return value.client;
+}

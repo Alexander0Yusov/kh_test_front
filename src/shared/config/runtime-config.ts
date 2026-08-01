@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 export interface RuntimeConfig {
   backendUrl: string;
 }
@@ -9,30 +11,29 @@ export class RuntimeConfigError extends Error {
   }
 }
 
+const backendUrlSchema = z
+  .url("BACKEND_URL must be an absolute URL.")
+  .refine((value) => ["http:", "https:"].includes(new URL(value).protocol), {
+    message: "BACKEND_URL must use the HTTP or HTTPS protocol.",
+  });
+
 export function validateBackendUrl(value: unknown): string {
-  if (typeof value !== "string" || value.length === 0) {
-    throw new RuntimeConfigError("BACKEND_URL is not configured.");
+  const result = backendUrlSchema.safeParse(value);
+
+  if (!result.success) {
+    throw new RuntimeConfigError(result.error.issues[0]?.message ?? "BACKEND_URL is invalid.");
   }
 
-  let url: URL;
-
-  try {
-    url = new URL(value);
-  } catch {
-    throw new RuntimeConfigError("BACKEND_URL must be an absolute URL.");
-  }
-
-  if (!["http:", "https:"].includes(url.protocol)) {
-    throw new RuntimeConfigError(
-      "BACKEND_URL must use the HTTP or HTTPS protocol.",
-    );
-  }
-
+  const url = new URL(result.data);
   url.pathname = url.pathname.replace(/\/+$/, "");
   url.search = "";
   url.hash = "";
 
   return url.href.replace(/\/$/, "");
+}
+
+export function getRestApiBaseUrl(backendUrl: string): string {
+  return validateBackendUrl(backendUrl);
 }
 
 export function getBackendOrigin(backendUrl: string): string {
