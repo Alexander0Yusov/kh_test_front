@@ -1091,46 +1091,39 @@ Frontend должен обеспечивать:
 
 # 28. Posts WebSocket and realtime insertion
 
-- [ ] Создать singleton Socket.IO client для `/posts`.
-- [ ] Подключать его после загрузки runtime config.
-- [ ] Слушать `posts.created`.
-- [ ] Валидировать event через Zod.
-- [ ] Malformed event игнорировать с controlled log.
-- [ ] Не доверять event как полной Post-модели.
-- [ ] Проверять `postId`, `parentId`, `rootId`, sort metadata.
+- [x] Application-owned lifecycle создаёт один Socket.IO client для runtime-derived namespace `/posts`.
+- [x] Listener `posts.created` регистрируется до connect после загрузки runtime config.
+- [x] Zod проверяет точный Gateway payload: `postId`, `parentId`, `rootId`, `publishDate`, `userName`, `email` и root/reply nullability.
+- [x] Malformed events безопасно игнорируются без GET, store mutation или raw payload logging.
+- [x] Event используется только как placement notification; полная Post-модель загружается typed REST `getPost`.
+- [x] Events во время initial GraphQL loading дедуплицируются in-memory по `postId` и обрабатываются после ready state.
+- [x] Loaded IDs и request-scoped pending map подавляют duplicate events и concurrent point GET.
 
 ## Reply event
 
-- [ ] Если это reply и его rootId загружен, запросить `post(id)` через GraphQL.
-- [ ] Запрашивать только текущие selected fields.
-- [ ] Встроить reply через `upsertPostNode`.
-- [ ] Если rootId не загружен, не выполнять HTTP/GraphQL request.
-- [ ] Не создавать массовый запрос от всех клиентов для невидимого дерева.
+- [x] Reply relevant только когда `rootIds` содержит exact `rootId` и непосредственный parent загружен.
+- [x] Relevant reply выполняет максимум один abortable REST `getPost(postId)` и existing mapper/`upsertPost`.
+- [x] Reply upsert меняет только normalized `postsById`; `rootIds`, cursor и `hasMore` сохраняются.
+- [x] Для незагруженного root GET и store mutation не выполняются.
 
 ## Root event
 
-- [ ] Определить, может ли новый root принадлежать текущему загруженному диапазону.
-- [ ] Использовать текущий sortBy, direction и tie-breaker Post ID.
-- [ ] Для sortBy `createdAt` использовать publishDate из event.
-- [ ] Для sortBy `userName` использовать userName из event.
-- [ ] Для sortBy `email` использовать email из event.
-- [ ] Если root должен находиться до/внутри уже загруженного диапазона, запросить `post(id)` и вставить.
-- [ ] Не удалять последний существующий root.
-- [ ] Если новый root находится после текущей границы и `hasMore=true`, не запрашивать его сейчас.
-- [ ] Если `hasMore=false` и root относится к продолжению последней страницы, запросить и добавить.
-- [ ] Realtime roots могут временно увеличить число отображаемых roots сверх page size.
-- [ ] Следующий cursor request продолжает путь от прежнего server boundary.
-- [ ] Не менять nextCursor из-за realtime insertion.
-- [ ] Merge следующей страницы дедуплицирует уже вставленные realtime nodes.
+- [x] Existing root comparator определяет relevance по active sort, direction и Post ID tie-breaker.
+- [x] `hasMore=true`: root после последней loaded boundary игнорируется без GET; root до/на boundary точечно загружается.
+- [x] `hasMore=false`: новый root точечно загружается независимо от placement и может увеличить displayed count сверх limit.
+- [x] Relevant root проходит REST mapper и normalized `upsertPost`, dedupe и обычную `.sort()` без binary insertion.
+- [x] Realtime insertion не удаляет boundary root и не меняет `nextCursor` или `hasMore`.
+- [ ] Определить Sidebar UX для realtime root, когда active sort field глобально скрыт и boundary нельзя сравнить.
 
 ## Reliability
 
-- [ ] Повторное событие не вызывает duplicate node.
-- [ ] Если Post уже загружен, не выполнять повторный GraphQL request.
-- [ ] При reconnect не очищать feed.
-- [ ] При временной недоступности GraphQL показать ненавязчивый toast.
-- [ ] Не создавать бесконечный realtime retry.
-- [ ] Проверить два WebSocket-клиента runtime-тестом.
+- [x] Повторное или собственное already-upserted событие не создаёт duplicate node/toast.
+- [x] Успешная внешняя вставка показывает один toast: `New message added` или `New reply added`.
+- [x] Point GET failure оставляет feed неизменным, очищает pending и показывает один controlled toast без retry.
+- [x] Reconnect сохраняет feed и восстанавливает получение будущих events через Socket.IO.
+- [ ] Добавить missed-event reconciliation после reconnect; текущие notifications имеют at-most-once semantics.
+- [ ] Добавить Redis Socket.IO adapter для horizontal Gateway scaling.
+- [ ] PARTIAL — `/posts` handshake, two-client root/reply/nested insertion, dedupe и toast требуют browser runtime; browser surface недоступен в текущей сессии.
 
 ---
 

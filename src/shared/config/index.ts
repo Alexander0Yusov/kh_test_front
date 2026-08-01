@@ -3,6 +3,7 @@ export {
   getBackendOrigin,
   getFilesSocketUrl,
   getGraphqlUrl,
+  getPostsSocketUrl,
   getRestApiBaseUrl,
   getSwaggerJsonUrl,
   RuntimeConfigError,

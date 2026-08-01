@@ -8,6 +8,10 @@ export {
   FilesSocketClient,
 } from "./files-socket-client";
 export {
+  type PostsCreatedEvent,
+  PostsSocketClient,
+} from "./posts-socket-client";
+export {
   createGraphqlClient,
   type GraphqlClient,
   GraphqlRequestError,

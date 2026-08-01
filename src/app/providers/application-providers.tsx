@@ -8,6 +8,7 @@ import { StoreProvider } from "../store/store-provider";
 import { FilesClientProvider } from "./files-client-provider";
 import { LoginTriggerProvider } from "./login-trigger-provider";
 import { ModalHostController } from "./modal-host-controller";
+import { PostsRealtimeController } from "./posts-realtime-controller";
 import { RuntimeClientProvider } from "./runtime-client-provider";
 import { SessionBootstrap } from "./session-bootstrap";
 
@@ -23,6 +24,7 @@ export function ApplicationProviders({
       <LoginTriggerProvider>
         <RuntimeClientProvider>
           <FilesClientProvider>
+            <PostsRealtimeController />
             <SessionBootstrap>{children}</SessionBootstrap>
             <ModalHostController />
             <AppToaster />

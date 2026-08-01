@@ -44,6 +44,10 @@ export function getFilesSocketUrl(backendUrl: string): string {
   return `${getBackendOrigin(backendUrl)}/files`;
 }
 
+export function getPostsSocketUrl(backendUrl: string): string {
+  return `${getBackendOrigin(backendUrl)}/posts`;
+}
+
 export function getSwaggerJsonUrl(backendUrl: string): string {
   return `${validateBackendUrl(backendUrl)}/docs-json`;
 }

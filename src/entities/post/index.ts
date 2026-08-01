@@ -7,13 +7,16 @@ export {
   sanitizePostMessage,
 } from "./model/sanitize-post-message";
 export {
+  compareRootPosts,
   createPostsSlice,
+  hasRootSortValue,
   type PostFieldSelection,
   type PostsPage,
   type PostsQueryRules,
   type PostsRequestStatus,
   type PostsSlice,
   type PostViewModel,
+  type RootPostSortCandidate,
 } from "./model/posts-slice";
 export {
   PostCard,

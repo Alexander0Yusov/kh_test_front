@@ -110,9 +110,24 @@ function appendRootIds(current: string[], items: PostViewModel[]): string[] {
   return next;
 }
 
-function compareRootPosts(
-  left: PostViewModel,
-  right: PostViewModel,
+export type RootPostSortCandidate = Pick<PostViewModel, "id" | "userName"> &
+  Partial<Pick<PostViewModel, "email" | "publishDate">>;
+
+export function hasRootSortValue(
+  post: RootPostSortCandidate,
+  rules: PostsQueryRules,
+): boolean {
+  if (rules.sortBy === "EMAIL") return typeof post.email === "string";
+  if (rules.sortBy === "CREATED_AT") {
+    return typeof post.publishDate === "string" &&
+      !Number.isNaN(Date.parse(post.publishDate));
+  }
+  return post.userName.length > 0;
+}
+
+export function compareRootPosts(
+  left: RootPostSortCandidate,
+  right: RootPostSortCandidate,
   rules: PostsQueryRules,
 ): number {
   let comparison: number;
