@@ -9,6 +9,7 @@ import type { RestClient } from "@/shared/api";
 import { Button } from "@/shared/ui/button";
 import { FormField } from "@/shared/ui/form-field";
 import { Input } from "@/shared/ui/input";
+import { PasswordInput } from "@/shared/ui/password-input";
 
 import { type RegistrationValues, registrationSchema } from "../model/registration-schema";
 import { registerUser } from "../model/register-user";
@@ -74,7 +75,7 @@ export function RegistrationForm({
         <Input aria-describedby={errors.email ? "register-email-error" : undefined} aria-invalid={Boolean(errors.email)} autoComplete="email" disabled={isSubmitting} id="register-email" type="email" {...register("email")} />
       </FormField>
       <FormField error={errors.password?.message} htmlFor="register-password" label="Пароль">
-        <Input aria-describedby={errors.password ? "register-password-error" : undefined} aria-invalid={Boolean(errors.password)} autoComplete="new-password" disabled={isSubmitting} id="register-password" type="password" {...register("password")} />
+        <PasswordInput aria-describedby={errors.password ? "register-password-error" : undefined} aria-invalid={Boolean(errors.password)} autoComplete="new-password" disabled={isSubmitting} id="register-password" {...register("password")} />
       </FormField>
       {avatarField}
       {errors.root?.message ? <p className="form-error" role="alert">{errors.root.message}</p> : null}

@@ -7,6 +7,11 @@ export {
   type FileUploadedExpectation,
   FilesSocketClient,
 } from "./files-socket-client";
+export {
+  createGraphqlClient,
+  type GraphqlClient,
+  GraphqlRequestError,
+} from "./create-graphql-client";
 export type {
   components,
   operations,

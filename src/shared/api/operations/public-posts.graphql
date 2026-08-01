@@ -1,0 +1,34 @@
+query PublicPosts(
+  $cursor: String
+  $limit: Int! = 25
+  $sortBy: PostSortField! = CREATED_AT
+  $sortDirection: SortDirection! = DESC
+  $includeAvatar: Boolean! = true
+  $includeHomePage: Boolean! = true
+  $includeEmail: Boolean! = true
+  $includeAttachment: Boolean! = true
+  $includePublishDate: Boolean! = true
+) {
+  posts(
+    cursor: $cursor
+    limit: $limit
+    sortBy: $sortBy
+    sortDirection: $sortDirection
+  ) {
+    items {
+      id
+      parentId
+      rootId
+      path
+      message
+      userName
+      avatarUrl @include(if: $includeAvatar)
+      homePage @include(if: $includeHomePage)
+      email @include(if: $includeEmail)
+      attachmentUrl @include(if: $includeAttachment)
+      publishDate @include(if: $includePublishDate)
+    }
+    nextCursor
+    hasMore
+  }
+}

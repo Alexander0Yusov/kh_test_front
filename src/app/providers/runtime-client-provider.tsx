@@ -10,7 +10,9 @@ import {
 } from "react";
 
 import {
+  type GraphqlClient,
   type RestClient,
+  createGraphqlClient,
   createRestClient,
 } from "@/shared/api";
 import {
@@ -24,12 +26,18 @@ import { useAppStoreApi } from "../store/store-provider";
 interface RuntimeClientContextValue {
   backendUrl: string;
   client: RestClient;
+  graphqlClient: GraphqlClient;
 }
 
 type RuntimeClientState =
   | { status: "loading" }
   | { message: string; status: "error" }
-  | { backendUrl: string; client: RestClient; status: "ready" };
+  | {
+      backendUrl: string;
+      client: RestClient;
+      graphqlClient: GraphqlClient;
+      status: "ready";
+    };
 
 const RuntimeClientContext =
   createContext<RuntimeClientContextValue | null>(null);
@@ -62,8 +70,14 @@ export function RuntimeClientProvider({
           backendUrl: config.backendUrl,
           getAccessToken: () => store.getState().accessToken ?? undefined,
         });
+        const graphqlClient = createGraphqlClient(config.backendUrl);
 
-        setState({ backendUrl: config.backendUrl, client, status: "ready" });
+        setState({
+          backendUrl: config.backendUrl,
+          client,
+          graphqlClient,
+          status: "ready",
+        });
       },
       () => {
         if (active) {
@@ -107,7 +121,11 @@ export function RuntimeClientProvider({
 
   return (
     <RuntimeClientContext.Provider
-      value={{ backendUrl: state.backendUrl, client: state.client }}
+      value={{
+        backendUrl: state.backendUrl,
+        client: state.client,
+        graphqlClient: state.graphqlClient,
+      }}
     >
       {children}
     </RuntimeClientContext.Provider>
@@ -132,4 +150,14 @@ export function useRuntimeClient(): RestClient {
   }
 
   return value.client;
+}
+
+export function useRuntimeGraphqlClient(): GraphqlClient {
+  const value = use(RuntimeClientContext);
+
+  if (!value) {
+    throw new Error("RuntimeClientProvider is missing.");
+  }
+
+  return value.graphqlClient;
 }

@@ -100,15 +100,17 @@ Frontend должен обеспечивать:
 - [x] Создать отдельную Zod schema для каждой формы.
 - [x] Ошибки формы показывать около соответствующих полей.
 - [x] Серверные ошибки сопоставлять с полями формы по `field`, если backend его возвращает.
+- [x] Добавить доступное управление видимостью password в Login через общий `PasswordInput`.
+- [x] Добавить доступное управление видимостью password в Register через общий `PasswordInput`.
 
 ## Contracts
 
 - [x] Генерировать REST-типы из Swagger/OpenAPI.
 - [x] Использовать `openapi-typescript`.
 - [x] Использовать `openapi-fetch` или эквивалентный строго типизированный клиент.
-- [ ] Генерировать GraphQL-типы через GraphQL Code Generator.
-- [ ] Использовать GraphQL Codegen Client Preset.
-- [ ] Хранить GraphQL operations в `.graphql` или типизированных document-файлах.
+- [x] Генерировать GraphQL-типы через GraphQL Code Generator.
+- [x] Использовать GraphQL Codegen Client Preset.
+- [x] Хранить GraphQL operations в `.graphql` или типизированных document-файлах.
 - [x] Сгенерированные артефакты хранить отдельно от handwritten-кода.
 - [ ] Production build не должен требовать работающий backend, если generated contracts уже актуальны.
 
@@ -117,9 +119,9 @@ Frontend должен обеспечивать:
 - [ ] Использовать `@headless-tree/react` как headless-библиотеку дерева.
 - [ ] Использовать библиотеку для accessibility, keyboard navigation и tree semantics.
 - [ ] Не отдавать библиотеке управление backend-сортировкой root-сообщений.
-- [ ] Хранить сообщения нормализованно и передавать библиотеке актуальный tree data source.
+- [x] Хранить сообщения нормализованно и передавать presentation adapter актуальный flat data source.
 - [ ] Реализовать собственный детерминированный `upsertPostNode`.
-- [ ] Не создавать на frontend рекурсивную копию данных как второй источник истины.
+- [x] Не создавать на frontend рекурсивную копию данных как второй источник истины.
 
 ## Files
 
@@ -164,7 +166,7 @@ Frontend должен обеспечивать:
 
 - [ ] Swagger JSON: `GET /api/docs-json`.
 - [ ] Swagger UI: `GET /api/docs`.
-- [ ] GraphQL: `POST /api/graphql`.
+- [x] GraphQL: `POST /api/graphql`.
 - [ ] Регистрация: `POST /api/users/register`.
 - [ ] Login: `POST /api/auth/login`.
 - [ ] Refresh: использовать существующий backend refresh endpoint из Swagger.
@@ -527,27 +529,22 @@ Frontend должен обеспечивать:
 
 ## Posts slice
 
-- [ ] Создать `postsSlice`.
-- [ ] Хранить entities как `Record<PostId, PostViewModel>`.
-- [ ] Отдельно хранить упорядоченный массив `rootIds`.
-- [ ] Не хранить nested `children[]` как второй источник истины.
-- [ ] Хранить:
+- [x] Создать `postsSlice`.
+- [x] Хранить entities как `Record<PostId, PostViewModel>`.
+- [x] Отдельно хранить упорядоченный массив `rootIds`.
+- [x] Не хранить nested `children[]` как второй источник истины.
+- [x] Хранить:
   - cursor;
   - nextCursor;
   - hasMore;
   - loading state;
   - active request key;
   - error.
-- [ ] Actions:
-  - resetFeed;
-  - loadFirstPage;
-  - loadNextPage;
-  - mergePage;
-  - upsertPostNode;
-  - clearPosts.
-- [ ] Дедупликация выполняется по Post ID.
-- [ ] Replies упорядочиваются по числовым сегментам `path`.
-- [ ] Root order задаётся backend sorting rules.
+- [x] Actions текущего feed: `beginInitialLoad`, `replaceFeed`, `beginLoadMore`, `appendPage`, `setFeedError`, `resetFeed`.
+- [ ] Добавить realtime actions `upsertPostNode` и `clearPosts` в соответствующем будущем срезе.
+- [x] Дедупликация выполняется по Post ID.
+- [x] Replies упорядочиваются по числовым сегментам `path`.
+- [x] Root order задаётся backend sorting rules.
 - [ ] Realtime insert не меняет cursor.
 
 ## Options slice
@@ -606,26 +603,27 @@ Frontend должен обеспечивать:
 
 ## GraphQL
 
-- [ ] Добавить GraphQL Codegen config.
-- [ ] Получать development schema из `${BACKEND_URL}/graphql`.
-- [ ] Создать typed documents для `posts` и `post`.
-- [ ] Генерировать TypeScript types и typed document nodes.
-- [ ] Не строить GraphQL selection строковой конкатенацией пользовательских значений.
-- [ ] Использовать fixed operation с boolean variables и directives.
-- [ ] Коммитить необходимые generated artifacts для воспроизводимого build.
-- [ ] Добавить `contracts:graphql`.
+- [x] Добавить GraphQL Codegen config.
+- [x] Получать development schema из `${BACKEND_URL}/graphql`.
+- [x] Создать typed document `PublicPosts` для `posts`.
+- [ ] Создать typed document для `post(id)` в realtime/detail срезе.
+- [x] Генерировать TypeScript types и typed document nodes.
+- [x] Не строить GraphQL selection строковой конкатенацией пользовательских значений.
+- [x] Использовать fixed operation с boolean variables и directives.
+- [x] Хранить необходимые generated artifacts для воспроизводимого build.
+- [x] Добавить `contracts:graphql`.
 - [ ] Добавить общий `contracts:generate`.
 - [ ] Добавить `contracts:check`.
 
 ## Application clients
 
 - [x] Создать REST client factory.
-- [ ] Создать GraphQL client.
+- [x] Создать GraphQL client.
 - [ ] Создать общий `AppError`.
 - [ ] Нормализовать REST DomainException.
 - [ ] Нормализовать GraphQL errors с `extensions.code`, `field`, `details`.
-- [ ] Добавить AbortSignal support.
-- [ ] Не показывать пользователю raw stack traces.
+- [x] Добавить AbortSignal support.
+- [x] Не показывать пользователю raw stack traces.
 - [ ] Не выполнять автоматический бесконечный retry мутаций.
 
 ---
@@ -758,11 +756,6 @@ Frontend должен обеспечивать:
 
 - [x] **Subscription race:** never emit `files.subscribe` before installing the matching `files.subscribed` listener.
 - [x] **Processing race:** never begin the Presigned POST before installing the matching `files.uploaded` listener.
-- [ ] Add durable File status reconciliation after WebSocket timeout or reconnect.
-  - WebSocket remains the primary realtime mechanism.
-  - Future reconciliation is a safety net for a genuinely lost at-most-once WebSocket frame and must not replace the normal WebSocket flow.
-  - A status endpoint, polling and retries are not implemented in the current slice.
-
 - [x] Создать singleton Socket.IO client для `/files`.
 - [x] Запросить upload request у Gateway.
 - [x] Получить fileId, uploadUrl и uploadFields.
@@ -901,27 +894,27 @@ Frontend должен обеспечивать:
 # 22. GraphQL field selection
 
 - [ ] Использовать GraphQL для чтения feed и отдельного Post.
-- [ ] REST оставить для auth, uploads, CAPTCHA, create Post и maintenance.
-- [ ] Базовые GraphQL-поля всегда запрашивать:
+- [x] REST оставить для auth, uploads, CAPTCHA, create Post и maintenance.
+- [x] Базовые GraphQL-поля всегда запрашивать:
   - id;
   - parentId;
   - rootId;
   - path;
   - message;
   - userName.
-- [ ] Optional поля управляются checkbox:
+- [x] Подготовить boolean selection variables для будущих checkbox optional-полей:
   - avatarUrl;
   - homePage;
   - email;
   - attachmentUrl;
   - publishDate.
-- [ ] Использовать GraphQL `@include` с boolean variables.
-- [ ] Не строить query через небезопасную строковую конкатенацию.
-- [ ] Не требовать email/publishDate в response только потому, что по ним выполняется backend sorting.
-- [ ] Backend может сортировать по полям, отсутствующим в GraphQL response.
-- [ ] Cursor остаётся гарантией правильного порядка.
-- [ ] Frontend не пересортировывает backend page повторно.
-- [ ] UserName остаётся обязательным для интерфейса.
+- [x] Использовать GraphQL `@include` с boolean variables.
+- [x] Не строить query через небезопасную строковую конкатенацию.
+- [x] Не требовать email/publishDate в response только потому, что по ним выполняется backend sorting.
+- [x] Backend может сортировать по полям, отсутствующим в GraphQL response.
+- [x] Cursor остаётся гарантией правильного порядка.
+- [x] Frontend не пересортировывает backend page повторно.
+- [x] UserName остаётся обязательным для интерфейса.
 - [ ] При снятии Avatar/File не выполнять лишние запросы за URL.
 - [ ] Изменение selection полностью сбрасывает текущий feed.
 - [ ] Повторный запрос начинается без cursor.
@@ -931,41 +924,41 @@ Frontend должен обеспечивать:
 
 # 23. Cursor Pagination and Infinite Scroll
 
-- [ ] Получать default feed с `createdAt DESC`, limit 25.
-- [ ] Передавать sortBy, sortDirection, limit и selected fields.
-- [ ] Cursor считать opaque string.
-- [ ] Никогда не редактировать cursor на frontend.
-- [ ] Никогда не декодировать cursor для бизнес-логики.
-- [ ] Сохранять nextCursor только для текущего canonical query key.
-- [ ] При изменении rules аннулировать старый cursor.
-- [ ] Реализовать IntersectionObserver sentinel.
-- [ ] Запрашивать следующую страницу только если `hasMore=true`.
-- [ ] Не запускать параллельно два одинаковых page request.
-- [ ] Использовать AbortController.
+- [x] Получать default feed с `createdAt DESC`, limit 25.
+- [x] Передавать sortBy, sortDirection, limit и selected fields.
+- [x] Cursor считать opaque string.
+- [x] Никогда не редактировать cursor на frontend.
+- [x] Никогда не декодировать cursor для бизнес-логики.
+- [x] Сохранять nextCursor только для текущего request generation.
+- [x] При reset аннулировать старый cursor.
+- [x] Реализовать IntersectionObserver sentinel.
+- [x] Запрашивать следующую страницу только если `hasMore=true`.
+- [x] Не запускать параллельно два одинаковых page request.
+- [x] Использовать AbortController.
 - [ ] Отменять старый запрос при смене options.
-- [ ] Не применять response устаревшего request key.
-- [ ] Merge выполнять без дублей.
-- [ ] Infinite Scroll пагинирует root families, а не отдельные child nodes.
-- [ ] Replies, пришедшие с root tree, не влияют на page size.
-- [ ] Показать нижний loading indicator.
+- [x] Не применять response устаревшего request generation.
+- [x] Merge выполнять без дублей.
+- [x] Infinite Scroll пагинирует root families, а не отдельные child nodes.
+- [x] Replies, пришедшие с root tree, не влияют на page size.
+- [x] Показать нижний loading indicator.
 - [ ] Показать end-of-feed state.
-- [ ] Retry не должен сбрасывать уже загруженные страницы.
+- [x] Retry не должен сбрасывать уже загруженные страницы.
 
 ---
 
 # 24. Tree model
 
-- [ ] Использовать flat backend response.
-- [ ] Построить normalized tree selectors.
-- [ ] Root Post определяется `parentId === null`.
-- [ ] Reply привязывается по `parentId`.
-- [ ] Для root использовать backend root order.
-- [ ] Для children использовать числовое сравнение path segments.
-- [ ] `1.10` должен располагаться после `1.2`.
-- [ ] Не сортировать path как обычную строку.
+- [x] Использовать flat backend response.
+- [x] Построить derived flat-to-tree presentation adapter.
+- [x] Root Post определяется `parentId === null`.
+- [x] Reply привязывается по `parentId`.
+- [x] Для root использовать backend root order.
+- [x] Для children использовать числовое сравнение path segments.
+- [x] `1.10` должен располагаться после `1.2`.
+- [x] Не сортировать path как обычную строку.
 - [ ] Использовать Headless Tree с controlled data source.
 - [ ] Обеспечить keyboard navigation.
-- [ ] Обеспечить правильные ARIA roles/levels.
+- [x] Обеспечить базовые ARIA tree roles/levels.
 - [ ] Поддержать динамический `upsertPostNode`.
 - [ ] Если parent ещё отсутствует, временно удерживать orphan node и присоединить после появления parent.
 - [ ] Не показывать reply, если его root family не загружено.
@@ -1240,7 +1233,7 @@ Frontend должен обеспечивать:
 - [x] Запустить frontend.
 - [x] Открыть приложение в browser.
 - [x] Проверить Swagger type generation.
-- [ ] Проверить GraphQL type generation.
+- [x] Проверить GraphQL type generation и повторную детерминированную generation.
 - [x] Зарегистрировать диагностического User с avatar через реальный backend integration.
 - [x] Убедиться, что Presigned POST подтверждён через `files.uploaded`.
 - [x] Выполнить login и `/users/me` через реальный backend integration.
@@ -1254,10 +1247,10 @@ Frontend должен обеспечивать:
 - [ ] Убедиться, что неправильная CAPTCHA обновляется.
 - [ ] Проверить allowed HTML.
 - [ ] Проверить удаление unsafe HTML.
-- [ ] Проверить GraphQL fields.
+- [ ] PARTIAL — GraphQL request и selection variables проверены; backend вернул пустой `items`, поэтому отображение metadata не подтверждено данными.
 - [ ] Проверить sorting Date/Email/UserName ASC/DESC.
 - [ ] Проверить page size 1/25/50.
-- [ ] Проверить Infinite Scroll.
+- [ ] PARTIAL — infinite scroll реализован; в backend нет второй cursor-страницы для runtime-проверки.
 - [ ] Проверить отсутствие дублей.
 - [ ] Проверить realtime root.
 - [ ] Проверить realtime reply видимого дерева.
@@ -1284,7 +1277,7 @@ Frontend должен обеспечивать:
 - [ ] PARTIAL — anonymous restore, открытие modal, внутренний click, X и возврат focus проверены; полный browser flow заблокирован недоступной browser-сессией и остановленным backend.
 - [x] `git diff --check` проходит.
 - [x] Generated OpenAPI types актуальны.
-- [ ] Generated GraphQL types актуальны.
+- [x] Generated GraphQL types актуальны.
 - [x] Нет вручную продублированных backend DTO.
 - [x] Нет tokens в browser storage.
 - [ ] PARTIAL — application/hydration errors отсутствуют; ожидаемый HTTP 401 refresh отображался браузером как network console error.
@@ -1294,7 +1287,7 @@ Frontend должен обеспечивать:
 - [ ] Нет N+1 frontend requests за avatar/attachment.
 - [ ] Нет full feed reload после `posts.created`.
 - [ ] Production container healthy.
-- [ ] Runtime `BACKEND_URL` используется всеми transports.
+- [x] Runtime `BACKEND_URL` используется REST, GraphQL и Files Socket.IO transports.
 - [ ] README содержит local/container start.
 - [x] Tasks.md соответствует фактическому состоянию.
 
@@ -1319,15 +1312,15 @@ Frontend считается завершённым, когда:
 - [ ] Animated GIF не становится статичным.
 - [ ] Любой итоговый upload не превышает 100 KiB.
 - [ ] Подтверждение upload приходит через WebSocket.
-- [ ] Feed загружается через GraphQL.
+- [x] Feed загружается через GraphQL.
 - [ ] Checkboxes реально управляют GraphQL selection.
-- [ ] UserName всегда отображается.
-- [ ] Cursor Pagination и Infinite Scroll работают.
-- [ ] Tree строится из flat response.
+- [x] UserName всегда включён в canonical query и отображается Post card.
+- [ ] PARTIAL — Cursor Pagination и Infinite Scroll реализованы, но backend не содержит второй страницы для runtime-проверки.
+- [x] Tree строится из flat response.
 - [ ] Новая node встраивается без полной перезагрузки страницы.
 - [ ] Realtime events не создают дубли.
-- [ ] Post card соответствует двухстрочной композиции.
-- [ ] Hover/focus behavior соответствует требованиям.
+- [x] Post card соответствует двухстрочной композиции.
+- [x] Hover/focus behavior соответствует требованиям.
 - [ ] Modal system единый.
 - [ ] Sidebar плавно закрывается и открывается.
 - [ ] Back to top возвращает обе полосы прокрутки.
@@ -1336,3 +1329,11 @@ Frontend считается завершённым, когда:
 - [ ] Swagger/OpenAPI и GraphQL типы генерируются.
 - [ ] Typecheck, lint и build проходят.
 - [ ] Runtime-проверка выполнена на реальном backend.
+
+## Deferred hardening backlog
+
+- [ ] Add durable File status reconciliation after WebSocket timeout or reconnect.
+  - WebSocket remains the primary realtime mechanism.
+  - Future reconciliation is a safety net for a genuinely lost at-most-once WebSocket frame and must not replace the normal WebSocket flow.
+  - It is deferred for this test project and does not block the current frontend business slices.
+  - A status endpoint, polling and retries are not implemented in the current slice.

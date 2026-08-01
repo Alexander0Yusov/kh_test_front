@@ -9,6 +9,7 @@ import type { RestClient } from "@/shared/api";
 import { Button } from "@/shared/ui/button";
 import { FormField } from "@/shared/ui/form-field";
 import { Input } from "@/shared/ui/input";
+import { PasswordInput } from "@/shared/ui/password-input";
 
 import {
   type LoginValues,
@@ -89,14 +90,13 @@ export function LoginForm({
         htmlFor="login-password"
         label="Пароль"
       >
-        <Input
+        <PasswordInput
           aria-describedby={
             errors.password ? "login-password-error" : undefined
           }
           aria-invalid={Boolean(errors.password)}
           autoComplete="current-password"
           id="login-password"
-          type="password"
           {...register("password")}
         />
       </FormField>

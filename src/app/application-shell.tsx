@@ -3,6 +3,7 @@
 import { AppHeader } from "@/widgets/app-header";
 
 import { useLoginTriggerRef, useRegisterTriggerRef } from "./providers/login-trigger-provider";
+import { PostsFeedController } from "./providers/posts-feed-controller";
 import { useRuntimeClient } from "./providers/runtime-client-provider";
 import { useAppStore } from "./store/store-provider";
 
@@ -28,7 +29,9 @@ export function ApplicationShell() {
         registerButtonRef={registerButtonRef}
         status={status}
       />
-      <main aria-label="Рабочая область" className="app-workspace" />
+      <main aria-label="Public messages" className="app-workspace">
+        <PostsFeedController />
+      </main>
     </div>
   );
 }
