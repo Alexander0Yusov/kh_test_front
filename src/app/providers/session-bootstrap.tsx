@@ -74,7 +74,7 @@ export function SessionBootstrap({
               setAttempt((value) => value + 1);
             }}
           >
-            Повторить
+            Retry
           </Button>
         </div>
       ) : null}

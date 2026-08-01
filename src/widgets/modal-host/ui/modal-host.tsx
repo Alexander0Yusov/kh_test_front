@@ -79,10 +79,10 @@ export function ModalHost({
       : modal === "attachmentPreview"
       ? "Attachment Preview"
       : modal === "register"
-      ? "Регистрация"
+      ? "Registration"
       : modal === "createRootPost"
-        ? "Create Root Message"
-        : "Вход";
+        ? "Create Message"
+        : "Login";
 
   return (
     <Dialog

@@ -52,7 +52,7 @@ export function LoginForm({
       onAuthenticated(result.accessToken, result.currentUser);
       reset();
       onSuccess();
-      toast.success("Вы вошли в систему.");
+      toast.success("You have logged in.");
       return;
     }
 
@@ -88,7 +88,7 @@ export function LoginForm({
       <FormField
         error={errors.password?.message}
         htmlFor="login-password"
-        label="Пароль"
+        label="Password"
       >
         <PasswordInput
           aria-describedby={
@@ -106,7 +106,7 @@ export function LoginForm({
         </p>
       ) : null}
       <Button disabled={isSubmitting} type="submit">
-        {isSubmitting ? "Вход…" : "Войти"}
+        {isSubmitting ? "Logging in…" : "Log In"}
       </Button>
     </form>
   );

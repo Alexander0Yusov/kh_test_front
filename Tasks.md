@@ -1445,3 +1445,14 @@ Frontend считается завершённым, когда:
 - [x] Keyboard activation moves focus to the feed top anchor before the control disappears.
 - [x] Smooth scrolling respects `prefers-reduced-motion` and becomes immediate when reduced motion is requested.
 - [ ] PARTIAL: browser confirmation of visibility, focus transfer, modal blocking, and absence of Network activity.
+
+## English-only system UI audit
+
+- [x] Production system UI uses English-only labels, placeholders, validation, modal, toast, loading, empty, retry, and error copy.
+- [x] Accessibility labels and document metadata are English; the root document uses `lang="en"`.
+- [x] Forms use custom validation with `noValidate`, preventing localized native validation bubbles.
+- [x] Native file inputs are visually hidden behind accessible English `Choose avatar` and `Choose attachment` controls.
+- [x] Frontend transport failures use controlled English messages instead of raw backend response text.
+- [x] Terminology consistently uses Login for the modal, Log In for the action, and Username in visible UI copy.
+- [x] Cyrillic audit of production `src` contains no frontend-authored system strings; generated contracts remain unchanged.
+- [ ] PARTIAL: browser verification of every modal/form/state and the accessibility tree is unavailable in the agent browser surface.

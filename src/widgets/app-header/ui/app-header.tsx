@@ -70,14 +70,14 @@ export function AppHeader({
         ) : null}
         {status === "anonymous" || status === "error" ? (
           <Button onClick={onOpenLogin} ref={loginButtonRef}>
-            Login
+            Log In
           </Button>
         ) : null}
         {status === "anonymous" || status === "error" ? (
           <Button onClick={onOpenRegister} ref={registerButtonRef}>Register</Button>
         ) : null}
         {status === "idle" || status === "restoring" ? (
-          <Button aria-label="Восстановление сессии" disabled>
+          <Button aria-label="Restoring session" disabled>
             <LoaderCircle
               aria-hidden="true"
               className="progress-icon"

@@ -49,18 +49,18 @@ function outputName(name: string, extension: AvatarExtension): string {
 
 async function canvasBlob(canvas: HTMLCanvasElement, mime: string, quality?: number): Promise<Blob> {
   const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, mime, quality));
-  if (!blob) throw new Error("Не удалось обработать изображение.");
+  if (!blob) throw new Error("Could not process the image.");
   return blob;
 }
 
 async function verifyRaster(blob: Blob, width: number, height: number): Promise<void> {
   if (blob.size === 0 || blob.size > MAX_AVATAR_BYTES) {
-    throw new Error("Итоговый размер avatar недопустим.");
+    throw new Error("The processed avatar size is invalid.");
   }
   const bitmap = await createImageBitmap(blob);
   try {
     if (bitmap.width !== width || bitmap.height !== height) {
-      throw new Error("Изображение не прошло проверку итоговых dimensions.");
+      throw new Error("The image failed the processed dimensions check.");
     }
   } finally {
     bitmap.close();
@@ -100,20 +100,20 @@ async function processRaster(
         };
       }
     }
-    throw new Error("Изображение не удаётся уменьшить до 100 KiB без смены формата.");
+    throw new Error("The image cannot be reduced to 100 KiB without changing its format.");
   } finally {
     bitmap.close();
   }
 }
 
 export async function processAvatar(file: File): Promise<ProcessedAvatar> {
-  if (file.size === 0) throw new Error("Выбран пустой файл.");
+  if (file.size === 0) throw new Error("The selected file is empty.");
   const extension = getExtension(file.name);
-  if (!extension) throw new Error("Разрешены только JPG, JPEG, PNG и GIF.");
+  if (!extension) throw new Error("Only JPG, JPEG, PNG, and GIF files are allowed.");
   const bytes = new Uint8Array(await file.slice(0, 12).arrayBuffer());
   const detectedMime = sniffMime(bytes);
   if (!detectedMime || detectedMime !== MIME_BY_EXTENSION[extension] || file.type !== detectedMime) {
-    throw new Error("Расширение, MIME и содержимое изображения не совпадают.");
+    throw new Error("The image extension, MIME type, and content do not match.");
   }
 
   if (extension === ".gif") {

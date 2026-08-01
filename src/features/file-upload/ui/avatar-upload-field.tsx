@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import type { ProcessedAvatar } from "@/shared/lib/image-processing";
 
@@ -12,29 +12,38 @@ import { Input } from "@/shared/ui/input";
 import type { AvatarUploadController } from "../model/use-avatar-upload";
 
 const STATUS_LABELS = {
-  awaitingConfirmation: "Ожидание подтверждения Files service…",
-  failed: "Требуется исправление",
-  idle: "Avatar не выбран",
-  processing: "Обработка изображения…",
-  ready: "Готов к загрузке",
-  requesting: "Подготовка Presigned POST…",
-  subscribing: "Подписка на подтверждение…",
-  uploaded: "Avatar подтверждён",
-  uploading: "Загрузка в storage…",
-  validating: "Проверка изображения…",
+  awaitingConfirmation: "Waiting for file processing confirmation…",
+  failed: "Avatar requires attention",
+  idle: "No avatar selected",
+  processing: "Processing image…",
+  ready: "Avatar is ready",
+  requesting: "Preparing file upload…",
+  subscribing: "Subscribing to file notifications…",
+  uploaded: "Avatar upload confirmed",
+  uploading: "Uploading avatar…",
+  validating: "Validating image…",
 } as const;
 
 export function AvatarUploadField({ controller }: { controller: AvatarUploadController }) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const busy = ["requesting", "subscribing", "uploading", "awaitingConfirmation"].includes(controller.status);
+
   return (
     <FormField error={controller.error ?? undefined} htmlFor="register-avatar" label="Avatar">
       <Input
         accept=".jpg,.jpeg,.png,.gif,image/jpeg,image/png,image/gif"
-        disabled={["requesting", "subscribing", "uploading", "awaitingConfirmation"].includes(controller.status)}
+        className="file-input-control"
+        disabled={busy}
         id="register-avatar"
         key={controller.inputKey}
         onChange={controller.onFileChange}
+        ref={inputRef}
+        tabIndex={-1}
         type="file"
       />
+      <Button className="file-input-trigger" disabled={busy} onClick={() => inputRef.current?.click()}>
+        Choose avatar
+      </Button>
       {controller.file ? (
         <AvatarPreview
           controller={controller}
@@ -60,7 +69,7 @@ function AvatarPreview({
 
   return (
     <div className="avatar-preview">
-      <Image alt="Предпросмотр avatar" className="avatar-preview-image" height={80} src={previewUrl} unoptimized width={80} />
+      <Image alt="Avatar preview" className="avatar-preview-image" height={80} src={previewUrl} unoptimized width={80} />
       <div className="avatar-preview-details">
         <span>{file.file.name}</span>
         <span>{file.file.type}</span>
@@ -69,7 +78,7 @@ function AvatarPreview({
         <span>{STATUS_LABELS[controller.status]}</span>
       </div>
       <Button disabled={["requesting", "subscribing", "uploading", "awaitingConfirmation"].includes(controller.status)} onClick={controller.remove}>
-        Удалить
+        Remove avatar
       </Button>
     </div>
   );

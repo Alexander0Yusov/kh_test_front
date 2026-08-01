@@ -52,7 +52,7 @@ export function Dialog({
               </DialogPrimitive.Title>
               <DialogPrimitive.Close asChild>
                 <button
-                  aria-label="Закрыть"
+                  aria-label="Close dialog"
                   className="dialog-close"
                   disabled={closeDisabled}
                   type="button"

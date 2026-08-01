@@ -101,7 +101,7 @@ export function CreatePostForm({
       <FormField
         error={errors.userName?.message}
         htmlFor="create-post-user-name"
-        label="User name"
+        label="Username"
       >
         <Input
           aria-describedby={errors.userName ? "create-post-user-name-error" : undefined}
@@ -215,7 +215,7 @@ export function CreatePostForm({
             ? "Creating reply…"
             : "Creating message…"
           : parentId
-            ? "Answer"
+            ? "Reply"
             : "Create Message"}
       </Button>
     </form>

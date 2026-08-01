@@ -77,7 +77,7 @@ export function PostInteraction({
       </section>
       <section aria-label="Answer" className="post-answer-section">
         {sessionStatus === "authenticated" && state.status === "ready" ? answerForm : null}
-        {sessionStatus === "anonymous" && state.status === "ready" ? <div className="post-answer-notice"><p>Log in to answer</p><Button onClick={onLogin}>Login</Button></div> : null}
+        {sessionStatus === "anonymous" && state.status === "ready" ? <div className="post-answer-notice"><p>Log in to answer</p><Button onClick={onLogin}>Log In</Button></div> : null}
         {sessionStatus === "idle" || sessionStatus === "restoring" ? <p role="status">Restoring session…</p> : null}
         {sessionStatus === "error" ? <p role="alert">Answering is unavailable until the session is restored.</p> : null}
       </section>

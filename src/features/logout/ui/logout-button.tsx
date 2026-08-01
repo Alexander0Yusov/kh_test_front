@@ -29,20 +29,20 @@ export function LogoutButton({
     setIsSubmitting(false);
 
     if (result === "error") {
-      toast.error("Не удалось выйти. Попробуйте ещё раз.");
+      toast.error("Could not log out. Please try again.");
       return;
     }
 
     onAnonymous();
 
     if (result === "success") {
-      toast.success("Вы вышли из системы.");
+      toast.success("You have logged out.");
     }
   }
 
   return (
     <Button disabled={isSubmitting} onClick={handleLogout}>
-      {isSubmitting ? "Выход…" : "Log Out"}
+      {isSubmitting ? "Logging out…" : "Log Out"}
     </Button>
   );
 }

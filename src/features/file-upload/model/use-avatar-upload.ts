@@ -99,7 +99,7 @@ export function useAvatarUpload(
         setStatus("ready");
       } catch (reason: unknown) {
         if (version !== selectionVersion.current) return;
-        setError(reason instanceof Error ? reason.message : "Не удалось обработать avatar.");
+        setError(reason instanceof Error ? reason.message : "Could not process the avatar.");
         setStatus("failed");
       }
     })();
@@ -107,7 +107,7 @@ export function useAvatarUpload(
 
   const upload = useCallback(async (): Promise<string> => {
     if (confirmedFileId.current) return confirmedFileId.current;
-    if (!file) throw new Error("Выберите и подготовьте avatar.");
+    if (!file) throw new Error("Select an avatar.");
     if (operation.current) return operation.current;
 
     operation.current = (async () => {
@@ -128,7 +128,7 @@ export function useAvatarUpload(
         return fileId;
       } catch (reason: unknown) {
         cancelUploadExpectation();
-        const message = reason instanceof Error ? reason.message : "Не удалось загрузить avatar.";
+        const message = reason instanceof Error ? reason.message : "Could not upload the avatar.";
         setError(message);
         setStatus("failed");
         throw new Error(message);

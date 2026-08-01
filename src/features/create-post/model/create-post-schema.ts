@@ -47,12 +47,12 @@ export const createPostSchema = z.object({
     .string()
     .min(1, "CAPTCHA is required.")
     .regex(latinLettersAndNumbers, "Use only Latin letters and numbers."),
-  email: z.email("Enter a valid email address."),
+  email: z.string().min(1, "Email is required.").email("Enter a valid email address."),
   homePage: optionalHomePageSchema,
   message: messageSchema,
   userName: z
     .string()
-    .min(1, "User name is required.")
+    .min(1, "Username is required.")
     .regex(latinLettersAndNumbers, "Use only Latin letters and numbers."),
 });
 

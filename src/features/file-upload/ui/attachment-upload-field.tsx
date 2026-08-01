@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/shared/ui/button";
 import { FormField } from "@/shared/ui/form-field";
@@ -22,7 +22,7 @@ const STATUS_LABELS = {
   idle: "No attachment selected",
   processing: "Processing attachment…",
   ready: "Attachment is ready",
-  requesting: "Preparing Presigned POST…",
+  requesting: "Preparing file upload…",
   subscribing: "Subscribing to file notifications…",
   uploaded: "Attachment upload confirmed",
   uploading: "Uploading attachment to storage…",
@@ -35,6 +35,7 @@ export function AttachmentUploadField({
   controller: AttachmentUploadController;
 }) {
   const busy = BUSY_STAGES.some((stage) => stage === controller.status);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   return (
     <FormField
@@ -44,12 +45,18 @@ export function AttachmentUploadField({
     >
       <Input
         accept=".jpg,.jpeg,.png,.gif,.txt,image/jpeg,image/png,image/gif,text/plain"
+        className="file-input-control"
         disabled={busy}
         id="create-post-attachment"
         key={controller.inputKey}
         onChange={controller.onFileChange}
+        ref={inputRef}
+        tabIndex={-1}
         type="file"
       />
+      <Button className="file-input-trigger" disabled={busy} onClick={() => inputRef.current?.click()}>
+        Choose attachment
+      </Button>
       {controller.file ? (
         <AttachmentPreview controller={controller} />
       ) : (

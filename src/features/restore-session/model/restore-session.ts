@@ -27,7 +27,7 @@ export async function restoreSession(
 
     if (!refreshResult.data?.accessToken) {
       return {
-        message: "Не удалось восстановить сессию. Попробуйте ещё раз.",
+        message: "Could not restore the session. Please try again.",
         status: "error",
       };
     }
@@ -44,7 +44,7 @@ export async function restoreSession(
 
     if (!currentUserResult.data) {
       return {
-        message: "Не удалось получить текущего пользователя.",
+        message: "Could not load the current user.",
         status: "error",
       };
     }
@@ -56,7 +56,7 @@ export async function restoreSession(
     };
   } catch {
     return {
-      message: "Backend временно недоступен. Повторите попытку.",
+      message: "Service is temporarily unavailable.",
       status: "error",
     };
   }

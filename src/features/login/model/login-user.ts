@@ -30,7 +30,7 @@ export async function loginUser(
 
     if (loginResult.response.status === 401) {
       return {
-        message: "Неверный email или пароль.",
+        message: "Invalid email or password.",
         status: "credentials-error",
       };
     }
@@ -44,14 +44,14 @@ export async function loginUser(
 
       return {
         field,
-        message: "Проверьте введённые данные.",
+        message: "Check the entered information.",
         status: "credentials-error",
       };
     }
 
     if (!loginResult.data?.accessToken) {
       return {
-        message: "Не удалось выполнить вход. Попробуйте позже.",
+        message: "Could not log in. Please try again later.",
         status: "infrastructure-error",
       };
     }
@@ -64,7 +64,7 @@ export async function loginUser(
 
     if (!currentUserResult.data) {
       return {
-        message: "Не удалось получить текущего пользователя.",
+        message: "Could not load the current user.",
         status: "infrastructure-error",
       };
     }
@@ -76,7 +76,7 @@ export async function loginUser(
     };
   } catch {
     return {
-      message: "Backend временно недоступен. Повторите попытку.",
+      message: "Service is temporarily unavailable.",
       status: "infrastructure-error",
     };
   }

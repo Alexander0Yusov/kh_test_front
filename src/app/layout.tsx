@@ -24,7 +24,7 @@ export default function RootLayout({
   children,
 }: Readonly<RootLayoutProps>) {
   return (
-    <html className={nunito.variable} lang="ru">
+    <html className={nunito.variable} lang="en">
       <body>
         <ApplicationProviders>{children}</ApplicationProviders>
       </body>

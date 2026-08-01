@@ -114,8 +114,8 @@ export function PostCard({ fields, onAttachmentPreview, onPostInteraction, post 
         </strong>
         <span className="post-metadata-action">
           <CopyMetadataButton
-            accessibleLabel="Copy user name"
-            successMessage="User name copied."
+            accessibleLabel="Copy full username"
+            successMessage="Username copied."
             value={post.userName}
           />
         </span>
@@ -131,7 +131,7 @@ export function PostCard({ fields, onAttachmentPreview, onPostInteraction, post 
         >
           {post.email ? (
             <CopyMetadataButton
-              accessibleLabel="Copy email"
+              accessibleLabel="Copy full email"
               successMessage="Email copied."
               value={post.email}
             />
@@ -150,7 +150,7 @@ export function PostCard({ fields, onAttachmentPreview, onPostInteraction, post 
         >
           {homePage ? (
             <CopyMetadataButton
-              accessibleLabel="Copy home page"
+              accessibleLabel="Copy full homepage"
               successMessage="Home page copied."
               value={post.homePage ?? ""}
             />

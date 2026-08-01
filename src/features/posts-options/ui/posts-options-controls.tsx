@@ -9,7 +9,7 @@ interface PostsOptionsControlsProps {
 const SORT_OPTIONS = [
   ["Date", "CREATED_AT"],
   ["Email", "EMAIL"],
-  ["UserName", "USER_NAME"],
+  ["Username", "USER_NAME"],
 ] as const;
 const FIELD_OPTIONS = [
   ["Avatar", "avatar"],

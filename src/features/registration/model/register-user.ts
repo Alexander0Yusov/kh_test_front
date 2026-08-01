@@ -20,13 +20,13 @@ export async function registerUser(
     const result = await client.POST("/users/register", { body });
     if (result.response.status === 201 && result.data) return { status: "registered" };
     if (result.response.status === 409) {
-      return { message: "Пользователь с таким email уже существует.", status: "duplicate" };
+      return { message: "A user with this email already exists.", status: "duplicate" };
     }
     if (result.response.status === 400) {
-      return { message: "Проверьте данные и выбранный avatar.", status: "validation-error" };
+      return { message: "Check the entered information and selected avatar.", status: "validation-error" };
     }
-    return { message: "Регистрация временно недоступна.", status: "infrastructure-error" };
+    return { message: "Registration is temporarily unavailable.", status: "infrastructure-error" };
   } catch {
-    return { message: "Backend временно недоступен. Повторите попытку.", status: "infrastructure-error" };
+    return { message: "Service is temporarily unavailable.", status: "infrastructure-error" };
   }
 }

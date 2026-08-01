@@ -31,7 +31,7 @@ function normalizeError(error: ErrorResponse | undefined): Omit<
   return {
     code: error?.code ?? "UNKNOWN",
     field: error?.field ?? null,
-    message: error?.message ?? "The post could not be created.",
+    message: error?.field ? "Check this field." : "Could not create the message.",
   };
 }
 

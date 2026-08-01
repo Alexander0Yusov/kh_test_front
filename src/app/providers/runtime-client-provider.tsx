@@ -82,7 +82,7 @@ export function RuntimeClientProvider({
       () => {
         if (active) {
           setState({
-            message: "Конфигурация приложения недоступна.",
+            message: "Application configuration is unavailable.",
             status: "error",
           });
         }
@@ -97,7 +97,7 @@ export function RuntimeClientProvider({
   if (state.status === "loading") {
     return (
       <main className="app-status" role="status">
-        Загрузка приложения…
+        Loading application…
       </main>
     );
   }
@@ -113,7 +113,7 @@ export function RuntimeClientProvider({
             setAttempt((value) => value + 1);
           }}
         >
-          Повторить
+          Retry
         </Button>
       </main>
     );

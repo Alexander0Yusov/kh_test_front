@@ -44,7 +44,7 @@ export function RegistrationForm({
 
   const submit = handleSubmit(async (values) => {
     if (!avatarReady) {
-      setError("root", { message: "Выберите и подготовьте обязательный avatar." });
+      setError("root", { message: "Select an avatar." });
       return;
     }
     onBusyChange(true);
@@ -54,7 +54,7 @@ export function RegistrationForm({
       if (result.status === "registered") {
         reset();
         onSuccess();
-        toast.success("Регистрация завершена. Теперь выполните Login.");
+        toast.success("Registration complete. You can now log in.");
       } else if (result.status === "duplicate") {
         setError("email", { message: result.message, type: "server" });
       } else if (result.status === "validation-error") {
@@ -63,7 +63,7 @@ export function RegistrationForm({
         toast.error(result.message);
       }
     } catch (reason: unknown) {
-      toast.error(reason instanceof Error ? reason.message : "Не удалось зарегистрироваться.");
+      toast.error(reason instanceof Error ? reason.message : "Could not register.");
     } finally {
       onBusyChange(false);
     }
@@ -74,13 +74,13 @@ export function RegistrationForm({
       <FormField error={errors.email?.message} htmlFor="register-email" label="Email">
         <Input aria-describedby={errors.email ? "register-email-error" : undefined} aria-invalid={Boolean(errors.email)} autoComplete="email" disabled={isSubmitting} id="register-email" type="email" {...register("email")} />
       </FormField>
-      <FormField error={errors.password?.message} htmlFor="register-password" label="Пароль">
+      <FormField error={errors.password?.message} htmlFor="register-password" label="Password">
         <PasswordInput aria-describedby={errors.password ? "register-password-error" : undefined} aria-invalid={Boolean(errors.password)} autoComplete="new-password" disabled={isSubmitting} id="register-password" {...register("password")} />
       </FormField>
       {avatarField}
       {errors.root?.message ? <p className="form-error" role="alert">{errors.root.message}</p> : null}
       <Button disabled={isSubmitting || !avatarReady} type="submit">
-        {isSubmitting ? "Регистрация…" : "Register"}
+        {isSubmitting ? "Registering…" : "Register"}
       </Button>
     </form>
   );

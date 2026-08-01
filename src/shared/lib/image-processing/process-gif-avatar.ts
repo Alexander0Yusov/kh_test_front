@@ -39,7 +39,7 @@ export async function processGifAvatar(file: File): Promise<ProcessedAvatar> {
   }
 
   const frames = decompressFrames(parsed, true);
-  if (frames.length === 0) throw new Error("GIF не содержит читаемых кадров.");
+  if (frames.length === 0) throw new Error("The GIF contains no readable frames.");
   const source = new ImageData(sourceWidth, sourceHeight);
   let restoreSnapshot: Uint8ClampedArray | null = null;
   let previous = frames[0];
@@ -74,7 +74,7 @@ export async function processGifAvatar(file: File): Promise<ProcessedAvatar> {
     toCanvas.height = height;
     await pica().resize(fromCanvas, toCanvas);
     const rgba = toCanvas.getContext("2d")?.getImageData(0, 0, width, height).data;
-    if (!rgba) throw new Error("Не удалось обработать кадр GIF.");
+    if (!rgba) throw new Error("Could not process a GIF frame.");
     const palette = quantize(rgba, 256, { format: "rgba4444", oneBitAlpha: true });
     const indexed = applyPalette(rgba, palette, "rgba4444");
     const transparentIndex = palette.findIndex((color) => (color[3] ?? 255) === 0);
@@ -91,11 +91,11 @@ export async function processGifAvatar(file: File): Promise<ProcessedAvatar> {
   encoder.finish();
   const bytes = encoder.bytes();
   if (bytes.byteLength > MAX_AVATAR_BYTES) {
-    throw new Error("Анимированный GIF после resize превышает 100 KiB.");
+    throw new Error("The resized animated GIF exceeds 100 KiB.");
   }
   const verified = parseGIF(Uint8Array.from(bytes).buffer);
   if (verified.lsd.width !== width || verified.lsd.height !== height) {
-    throw new Error("GIF не прошёл проверку итоговых dimensions.");
+    throw new Error("The GIF failed the processed dimensions check.");
   }
   return {
     extension: ".gif",
