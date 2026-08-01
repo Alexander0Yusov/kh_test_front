@@ -76,6 +76,113 @@ select {
   overflow: auto;
 }
 
+.options-sidebar {
+  position: fixed;
+  z-index: 4;
+  top: 3.5rem;
+  right: max(0px, calc((100vw - var(--container-app)) / 2));
+  display: grid;
+  width: 16rem;
+  grid-template-columns: 2rem 14rem;
+  transform: translateX(14rem);
+  transition: transform 500ms;
+}
+
+.options-sidebar.is-open {
+  transform: translateX(0);
+}
+
+.options-sidebar-handle {
+  appearance: none;
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: 1px solid var(--color-graphite);
+  border-radius: 0;
+  place-items: center;
+  background: var(--color-background-primary);
+  color: var(--color-graphite);
+  cursor: pointer;
+  transition: border-color var(--default-transition-duration), color var(--default-transition-duration);
+}
+
+.options-sidebar-handle:hover,
+.options-sidebar-handle:focus-visible {
+  border-color: var(--color-active-blue);
+  color: var(--color-active-blue);
+}
+
+.options-sidebar-panel {
+  padding: 0.75rem;
+  border: 1px solid var(--color-graphite);
+  background: var(--color-background-primary);
+}
+
+.options-sidebar-panel h2 {
+  margin: 0 0 0.75rem;
+  font-size: var(--text-base);
+}
+
+.posts-options-controls,
+.posts-options-controls fieldset {
+  display: grid;
+  gap: 0.375rem;
+}
+
+.posts-options-controls {
+  gap: 0.75rem;
+}
+
+.posts-options-controls fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 0.5rem;
+  border: 1px solid var(--color-graphite);
+}
+
+.posts-options-controls legend {
+  padding-inline: 0.25rem;
+  font-weight: 700;
+}
+
+.posts-options-controls label {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  cursor: pointer;
+}
+
+.posts-options-controls input {
+  width: 1rem;
+  height: 1rem;
+  margin: 0;
+  accent-color: var(--color-active-blue);
+}
+
+.page-size-input input {
+  appearance: textfield;
+  width: 3rem;
+  height: 2rem;
+  padding: 0.25rem;
+  border: 1px solid var(--color-graphite);
+  border-radius: 0;
+  background: var(--color-background-primary);
+  color: var(--color-graphite);
+  text-align: center;
+}
+
+.page-size-input input::-webkit-inner-spin-button,
+.page-size-input input::-webkit-outer-spin-button {
+  margin: 0;
+  appearance: none;
+}
+
+.options-description {
+  color: var(--color-background-secondary);
+  font-size: var(--text-xs);
+}
+
 .app-status {
   display: grid;
   width: var(--container-app);
@@ -382,17 +489,6 @@ select {
   position: relative;
   z-index: 2;
   display: grid;
-  grid-template-columns:
-    var(--post-metadata-avatar-slot)
-    var(--post-metadata-text-slot)
-    var(--post-metadata-action-slot)
-    var(--post-metadata-text-slot)
-    var(--post-metadata-action-slot)
-    var(--post-metadata-text-slot)
-    var(--post-metadata-action-slot)
-    var(--post-metadata-text-slot)
-    var(--post-metadata-action-slot)
-    var(--post-metadata-date-slot);
   min-width: 0;
   height: 2rem;
   align-items: center;
@@ -621,6 +717,7 @@ select {
 
 .dialog-content:has(.post-interaction) {
   width: min(50rem, calc(100vw - 2rem));
+  min-height: min(36rem, calc(100vh - 2rem));
   max-height: calc(100vh - 2rem);
 }
 

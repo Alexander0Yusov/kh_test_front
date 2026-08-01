@@ -7,8 +7,11 @@ export {
   sanitizePostMessage,
 } from "./model/sanitize-post-message";
 export {
+  arePostsQueryRulesEqual,
   compareRootPosts,
   createPostsSlice,
+  DEFAULT_POSTS_QUERY_RULES,
+  hasLoadedRootSortBoundary,
   hasRootSortValue,
   type PostFieldSelection,
   type PostsPage,

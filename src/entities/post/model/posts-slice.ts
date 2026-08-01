@@ -43,6 +43,7 @@ interface PostsState {
   loadingCursor: string | null;
   nextCursor: string | null;
   postsById: Record<string, PostViewModel>;
+  preferencesHydrated: boolean;
   reloadToken: number;
   rootIds: string[];
   rules: PostsQueryRules;
@@ -57,6 +58,7 @@ interface PostsActions {
   ) => void;
   beginInitialLoad: () => number;
   beginLoadMore: (cursor: string) => boolean;
+  hydrateRules: (rules: PostsQueryRules) => void;
   replaceFeed: (generation: number, page: PostsPage) => void;
   resetFeed: () => void;
   requestFeedReload: () => void;
@@ -65,12 +67,13 @@ interface PostsActions {
     message: string,
     requestedCursor?: string,
   ) => void;
+  setRules: (rules: PostsQueryRules) => boolean;
   upsertPost: (post: PostViewModel) => void;
 }
 
 export type PostsSlice = PostsActions & PostsState;
 
-const DEFAULT_RULES: PostsQueryRules = {
+export const DEFAULT_POSTS_QUERY_RULES: PostsQueryRules = {
   fields: {
     attachment: true,
     avatar: true,
@@ -82,6 +85,30 @@ const DEFAULT_RULES: PostsQueryRules = {
   sortBy: "CREATED_AT",
   sortDirection: "DESC",
 };
+
+export function arePostsQueryRulesEqual(
+  left: PostsQueryRules,
+  right: PostsQueryRules,
+): boolean {
+  return left.limit === right.limit &&
+    left.sortBy === right.sortBy &&
+    left.sortDirection === right.sortDirection &&
+    left.fields.attachment === right.fields.attachment &&
+    left.fields.avatar === right.fields.avatar &&
+    left.fields.email === right.fields.email &&
+    left.fields.homePage === right.fields.homePage &&
+    left.fields.publishDate === right.fields.publishDate;
+}
+
+export function hasLoadedRootSortBoundary(
+  postsById: Record<string, PostViewModel>,
+  rootIds: string[],
+  rules: PostsQueryRules,
+): boolean {
+  const boundaryId = rootIds.at(-1);
+  const boundary = boundaryId ? postsById[boundaryId] : undefined;
+  return boundary ? hasRootSortValue(boundary, rules) : true;
+}
 
 function mergePosts(
   current: Record<string, PostViewModel>,
@@ -154,9 +181,10 @@ export const createPostsSlice: StateCreator<PostsSlice> = (set, get) => ({
   loadingCursor: null,
   nextCursor: null,
   postsById: {},
+  preferencesHydrated: false,
   reloadToken: 0,
   rootIds: [],
-  rules: DEFAULT_RULES,
+  rules: DEFAULT_POSTS_QUERY_RULES,
   postsStatus: "idle",
   appendPage: (generation, requestedCursor, page) => {
     const state = get();
@@ -206,6 +234,10 @@ export const createPostsSlice: StateCreator<PostsSlice> = (set, get) => ({
 
     set({ postsError: null, loadingCursor: cursor, postsStatus: "loadingMore" });
     return true;
+  },
+  hydrateRules: (rules) => {
+    if (get().preferencesHydrated) return;
+    set({ preferencesHydrated: true, rules });
   },
   replaceFeed: (generation, page) => {
     if (get().generation !== generation) {
@@ -263,6 +295,23 @@ export const createPostsSlice: StateCreator<PostsSlice> = (set, get) => ({
       loadingCursor: null,
       postsStatus: "error",
     });
+  },
+  setRules: (rules) => {
+    const state = get();
+    if (arePostsQueryRulesEqual(state.rules, rules)) return false;
+    set({
+      postsError: null,
+      generation: state.generation + 1,
+      hasMore: true,
+      loadingCursor: null,
+      nextCursor: null,
+      postsById: {},
+      reloadToken: state.reloadToken + 1,
+      rootIds: [],
+      rules,
+      postsStatus: "idle",
+    });
+    return true;
   },
   upsertPost: (post) => {
     const state = get();

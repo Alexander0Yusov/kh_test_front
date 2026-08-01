@@ -4,7 +4,7 @@ import { Copy, Paperclip, UserRound } from "lucide-react";
 import Image from "next/image";
 import { useMemo, useState } from "react";
 
-import type { PostViewModel } from "../model/posts-slice";
+import type { PostFieldSelection, PostViewModel } from "../model/posts-slice";
 import { formatPublishDate } from "../model/format-publish-date";
 import { formatPostMetadataPreview } from "../model/format-post-metadata";
 import { sanitizePostMessage } from "../model/sanitize-post-message";
@@ -69,9 +69,20 @@ function getSafeExternalUrl(value: string | null | undefined): string | null {
 }
 
 interface PostCardProps {
+  fields: PostFieldSelection;
   onAttachmentPreview: AttachmentPreviewRequest;
   onPostInteraction: PostInteractionRequest;
   post: PostViewModel;
+}
+
+function buildMetadataGrid(fields: PostFieldSelection): string {
+  const columns = fields.avatar ? ["var(--post-metadata-avatar-slot)"] : [];
+  columns.push("var(--post-metadata-text-slot)", "var(--post-metadata-action-slot)");
+  if (fields.email) columns.push("var(--post-metadata-text-slot)", "var(--post-metadata-action-slot)");
+  if (fields.homePage) columns.push("var(--post-metadata-text-slot)", "var(--post-metadata-action-slot)");
+  if (fields.attachment) columns.push("var(--post-metadata-text-slot)", "var(--post-metadata-action-slot)");
+  if (fields.publishDate) columns.push("var(--post-metadata-date-slot)");
+  return columns.join(" ");
 }
 
 export type AttachmentPreviewRequest = (
@@ -84,7 +95,7 @@ export type PostInteractionRequest = (
   trigger: HTMLButtonElement,
 ) => void;
 
-export function PostCard({ onAttachmentPreview, onPostInteraction, post }: PostCardProps) {
+export function PostCard({ fields, onAttachmentPreview, onPostInteraction, post }: PostCardProps) {
   const publishDate = formatPublishDate(post.publishDate);
   const attachmentUrl = getSafeExternalUrl(post.attachmentUrl);
   const homePage = getSafeExternalUrl(post.homePage);
@@ -96,8 +107,8 @@ export function PostCard({ onAttachmentPreview, onPostInteraction, post }: PostC
 
   return (
     <article className="post-card">
-      <div className="post-metadata">
-        <PostAvatar key={post.avatarUrl ?? "fallback"} url={post.avatarUrl} />
+      <div className="post-metadata" style={{ gridTemplateColumns: buildMetadataGrid(fields) }}>
+        {fields.avatar ? <PostAvatar key={post.avatarUrl ?? "fallback"} url={post.avatarUrl} /> : null}
         <strong className="post-author post-metadata-text">
           {formatPostMetadataPreview(post.userName)}
         </strong>
@@ -108,7 +119,7 @@ export function PostCard({ onAttachmentPreview, onPostInteraction, post }: PostC
             value={post.userName}
           />
         </span>
-        <span
+        {fields.email ? <><span
           aria-hidden={post.email ? undefined : true}
           className="post-metadata-text"
         >
@@ -125,8 +136,8 @@ export function PostCard({ onAttachmentPreview, onPostInteraction, post }: PostC
               value={post.email}
             />
           ) : null}
-        </span>
-        {homePage ? (
+        </span></> : null}
+        {fields.homePage ? <>{homePage ? (
           <span className="post-metadata-text">
             {formatPostMetadataPreview(post.homePage ?? "")}
           </span>
@@ -146,15 +157,14 @@ export function PostCard({ onAttachmentPreview, onPostInteraction, post }: PostC
           ) : (
             <MetadataIconPlaceholder icon="copy" />
           )}
-        </span>
-        <span
+        </span></> : null}
+        {fields.attachment ? <><span
           className={attachmentUrl
             ? "post-metadata-text"
             : "post-metadata-placeholder post-metadata-text"}
         >
           Attachment
-        </span>
-        <span
+        </span><span
           aria-hidden={attachmentUrl ? undefined : true}
           className="post-metadata-action"
         >
@@ -173,15 +183,15 @@ export function PostCard({ onAttachmentPreview, onPostInteraction, post }: PostC
           ) : (
             <MetadataIconPlaceholder icon="attachment" />
           )}
-        </span>
-        <span
+        </span></> : null}
+        {fields.publishDate ? <span
           aria-hidden={publishDate ? undefined : true}
           className="post-date-slot"
         >
           {publishDate && typeof post.publishDate === "string" ? (
             <time dateTime={post.publishDate}>{publishDate}</time>
           ) : null}
-        </span>
+        </span> : null}
       </div>
       <div
         className="post-message"

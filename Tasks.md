@@ -1362,3 +1362,54 @@ Frontend считается завершённым, когда:
   - Future reconciliation is a safety net for a genuinely lost at-most-once WebSocket frame and must not replace the normal WebSocket flow.
   - It is deferred for this test project and does not block the current frontend business slices.
   - A status endpoint, polling and retries are not implemented in the current slice.
+
+## Options Sidebar implementation status
+
+- [x] Options Sidebar with native accessible Sort By and Direction radio groups.
+- [x] Optional Fields checkboxes; structural fields and userName remain mandatory.
+- [x] Page-size stepper with range 1-50 and default 25.
+- [x] SSR-safe custom `useLocalStorage` with versioned key, validation, hydration, and tab synchronization.
+- [x] Feed preferences hydrate before the single initial request.
+- [x] Rule changes cancel stale requests, reset the cursor/feed, and request the first page without cursor.
+- [x] Static `PublicPosts` include variables and infinite-scroll rules follow current preferences.
+- [x] PostCard optional metadata columns follow one global field selection.
+- [x] Sidebar uses a 500ms pointer-leave timer and an accessible arrow control.
+- [x] Hidden-sort realtime roots use a `New message available` refresh action.
+- [x] Feed refresh preserves rules and advances the request generation.
+- [ ] PARTIAL: browser verification of Sidebar animation, keyboard behavior, persistence, and GraphQL request sequencing.
+- [ ] PARTIAL: runtime pagination and hidden-sort realtime verification require suitable existing backend data.
+- [ ] Define hidden-sort-field realtime UX beyond the current refresh notification if requirements change.
+- [ ] Automatic missed-event reconciliation after Socket.IO reconnect.
+- [ ] Redis Socket.IO adapter / horizontal delivery hardening.
+- [ ] File status reconciliation (deferred for this test project).
+
+## Modal lifecycle invariants
+
+- [x] ModalHost remains in a stable application boundary during feed preference changes.
+- [x] Persisted feed synchronization is value-idempotent and skips identical serialized writes.
+- [x] Unrelated Posts store changes do not restart modal `getPost` or CAPTCHA requests.
+- [x] Read & Answer dimensions remain stable across loading and content states.
+- [ ] PARTIAL: confirm all modal lifecycle and dimensions in a real browser for at least 10 seconds each.
+
+## Root-tree cursor pagination verification
+
+- [x] Page Size controls the number of root trees in each cursor response.
+- [x] Descendants of selected roots are returned completely and do not consume the root limit.
+- [x] Cursor pages preserve family boundaries; no family appeared across multiple verified pages.
+- [x] Page Size supports editable numeric input with Enter/blur commit semantics.
+- [x] Page Size normalizes integers to the inclusive range 1-50 through one update action.
+- [x] A committed Page Size change advances request generation, clears feed/cursor, and starts without cursor.
+- [x] Subsequent cursor requests preserve the committed Page Size.
+- [x] Backend runtime with `limit: 2`: pages contained 2 roots/0 descendants, 2 roots/3 descendants, then 1 root/1 descendant.
+- [ ] PARTIAL: browser verification of input editing, persistence, observer-driven requests, and modal stability.
+
+## Intent-gated cursor pagination
+
+- [x] Page Size remains root trees per cursor request; descendants are complete and do not consume the limit.
+- [x] A committed rules change performs one initial request without cursor.
+- [x] Cursor continuation requires explicit downward wheel, touch, scroll, keyboard intent, or the accessible fallback action.
+- [x] One user intent starts at most one cursor request and cannot auto-chain the next page.
+- [x] A visible IntersectionObserver sentinel never starts a request without armed user intent.
+- [x] Short feeds without physical overflow retain wheel/touch/keyboard intent handling and a visible `Load more` fallback.
+- [x] Page Size is a single editable spinnerless numeric input with Enter/blur commit semantics.
+- [ ] PARTIAL: browser Network verification of the intent gate, persistence, and modal lifecycle.

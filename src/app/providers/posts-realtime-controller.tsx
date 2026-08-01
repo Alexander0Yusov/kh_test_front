@@ -35,6 +35,14 @@ export function PostsRealtimeController() {
       onInserted: (kind) => {
         toast.success(kind === "root" ? "New message added" : "New reply added");
       },
+      onRootSortUnavailable: () => {
+        toast("New message available", {
+          action: {
+            label: "Refresh feed",
+            onClick: () => store.getState().requestFeedReload(),
+          },
+        });
+      },
       onSynchronizationWarning: () => {
         toast.error("A new reply could not be synchronized.");
       },

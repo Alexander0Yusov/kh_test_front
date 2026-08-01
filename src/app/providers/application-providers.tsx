@@ -9,6 +9,7 @@ import { FilesClientProvider } from "./files-client-provider";
 import { LoginTriggerProvider } from "./login-trigger-provider";
 import { ModalHostController } from "./modal-host-controller";
 import { PostsRealtimeController } from "./posts-realtime-controller";
+import { PostsOptionsPersistence } from "./posts-options-persistence";
 import { RuntimeClientProvider } from "./runtime-client-provider";
 import { SessionBootstrap } from "./session-bootstrap";
 
@@ -21,6 +22,7 @@ export function ApplicationProviders({
 }: ApplicationProvidersProps) {
   return (
     <StoreProvider>
+      <PostsOptionsPersistence />
       <LoginTriggerProvider>
         <RuntimeClientProvider>
           <FilesClientProvider>

@@ -9,6 +9,7 @@ import {
   useRegisterTriggerRef,
 } from "./providers/login-trigger-provider";
 import { PostsFeedController } from "./providers/posts-feed-controller";
+import { OptionsSidebarController } from "./providers/options-sidebar-controller";
 import { useRuntimeClient } from "./providers/runtime-client-provider";
 import { useAppStore } from "./store/store-provider";
 
@@ -49,9 +50,10 @@ export function ApplicationShell() {
         registerButtonRef={registerButtonRef}
         status={status}
       />
-      <main aria-label="Public messages" className="app-workspace">
+      <main aria-label="Public messages" className="app-workspace" tabIndex={0}>
         <PostsFeedController />
       </main>
+      <OptionsSidebarController />
     </div>
   );
 }

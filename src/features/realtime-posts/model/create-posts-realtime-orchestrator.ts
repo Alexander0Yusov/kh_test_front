@@ -3,6 +3,7 @@ import {
   type PostsQueryRules,
   type PostsRequestStatus,
   compareRootPosts,
+  hasLoadedRootSortBoundary,
   hasRootSortValue,
   mapRestPost,
 } from "@/entities/post";
@@ -24,6 +25,7 @@ interface PostsRealtimeOrchestratorOptions {
   getSnapshot: () => RealtimePostsSnapshot;
   onError: () => void;
   onInserted: (kind: "reply" | "root") => void;
+  onRootSortUnavailable: () => void;
   onSynchronizationWarning: () => void;
   upsertPost: (post: PostViewModel) => void;
 }
@@ -40,11 +42,16 @@ function isFeedReady(snapshot: RealtimePostsSnapshot): boolean {
     (snapshot.status === "error" && snapshot.rootIds.length > 0);
 }
 
-function isRelevantRoot(
+function getRootRelevance(
   event: PostsCreatedEvent,
   snapshot: RealtimePostsSnapshot,
-): boolean {
-  if (!snapshot.hasMore || snapshot.rootIds.length === 0) return true;
+): "relevant" | "irrelevant" | "sort-unavailable" {
+  if (snapshot.rootIds.length === 0) return "relevant";
+
+  if (!hasLoadedRootSortBoundary(snapshot.postsById, snapshot.rootIds, snapshot.rules)) {
+    return "sort-unavailable";
+  }
+  if (!snapshot.hasMore) return "relevant";
 
   const boundaryId = snapshot.rootIds.at(-1);
   const boundary = boundaryId ? snapshot.postsById[boundaryId] : undefined;
@@ -57,13 +64,12 @@ function isRelevantRoot(
 
   if (
     !boundary ||
-    !hasRootSortValue(boundary, snapshot.rules) ||
     !hasRootSortValue(candidate, snapshot.rules)
   ) {
-    return false;
+    return "sort-unavailable";
   }
 
-  return compareRootPosts(candidate, boundary, snapshot.rules) <= 0;
+  return compareRootPosts(candidate, boundary, snapshot.rules) <= 0 ? "relevant" : "irrelevant";
 }
 
 export function createPostsRealtimeOrchestrator({
@@ -71,6 +77,7 @@ export function createPostsRealtimeOrchestrator({
   getSnapshot,
   onError,
   onInserted,
+  onRootSortUnavailable,
   onSynchronizationWarning,
   upsertPost,
 }: PostsRealtimeOrchestratorOptions): PostsRealtimeOrchestrator {
@@ -93,8 +100,13 @@ export function createPostsRealtimeOrchestrator({
         onSynchronizationWarning();
         return;
       }
-    } else if (!isRelevantRoot(event, initial)) {
-      return;
+    } else {
+      const relevance = getRootRelevance(event, initial);
+      if (relevance === "sort-unavailable") {
+        onRootSortUnavailable();
+        return;
+      }
+      if (relevance === "irrelevant") return;
     }
 
     const controller = new AbortController();
