@@ -40,6 +40,10 @@ export function getBackendOrigin(backendUrl: string): string {
   return new URL(validateBackendUrl(backendUrl)).origin;
 }
 
+export function getFilesSocketUrl(backendUrl: string): string {
+  return `${getBackendOrigin(backendUrl)}/files`;
+}
+
 export function getSwaggerJsonUrl(backendUrl: string): string {
   return `${validateBackendUrl(backendUrl)}/docs-json`;
 }

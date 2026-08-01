@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import { AppToaster } from "@/shared/ui/toaster";
 
 import { StoreProvider } from "../store/store-provider";
+import { FilesClientProvider } from "./files-client-provider";
 import { LoginTriggerProvider } from "./login-trigger-provider";
 import { ModalHostController } from "./modal-host-controller";
 import { RuntimeClientProvider } from "./runtime-client-provider";
@@ -21,9 +22,11 @@ export function ApplicationProviders({
     <StoreProvider>
       <LoginTriggerProvider>
         <RuntimeClientProvider>
-          <SessionBootstrap>{children}</SessionBootstrap>
-          <ModalHostController />
-          <AppToaster />
+          <FilesClientProvider>
+            <SessionBootstrap>{children}</SessionBootstrap>
+            <ModalHostController />
+            <AppToaster />
+          </FilesClientProvider>
         </RuntimeClientProvider>
       </LoginTriggerProvider>
     </StoreProvider>

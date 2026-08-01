@@ -22,13 +22,14 @@ import { Button } from "@/shared/ui/button";
 import { useAppStoreApi } from "../store/store-provider";
 
 interface RuntimeClientContextValue {
+  backendUrl: string;
   client: RestClient;
 }
 
 type RuntimeClientState =
   | { status: "loading" }
   | { message: string; status: "error" }
-  | { client: RestClient; status: "ready" };
+  | { backendUrl: string; client: RestClient; status: "ready" };
 
 const RuntimeClientContext =
   createContext<RuntimeClientContextValue | null>(null);
@@ -62,7 +63,7 @@ export function RuntimeClientProvider({
           getAccessToken: () => store.getState().accessToken ?? undefined,
         });
 
-        setState({ client, status: "ready" });
+        setState({ backendUrl: config.backendUrl, client, status: "ready" });
       },
       () => {
         if (active) {
@@ -105,10 +106,22 @@ export function RuntimeClientProvider({
   }
 
   return (
-    <RuntimeClientContext.Provider value={{ client: state.client }}>
+    <RuntimeClientContext.Provider
+      value={{ backendUrl: state.backendUrl, client: state.client }}
+    >
       {children}
     </RuntimeClientContext.Provider>
   );
+}
+
+export function useRuntimeBackendUrl(): string {
+  const value = use(RuntimeClientContext);
+
+  if (!value) {
+    throw new Error("RuntimeClientProvider is missing.");
+  }
+
+  return value.backendUrl;
 }
 
 export function useRuntimeClient(): RestClient {

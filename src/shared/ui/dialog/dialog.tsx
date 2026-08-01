@@ -6,6 +6,7 @@ import type { ReactNode, RefObject } from "react";
 
 interface DialogProps {
   children: ReactNode;
+  closeDisabled?: boolean;
   onOpenChange: (open: boolean) => void;
   open: boolean;
   returnFocusRef?: RefObject<HTMLElement | null>;
@@ -14,18 +15,30 @@ interface DialogProps {
 
 export function Dialog({
   children,
+  closeDisabled = false,
   onOpenChange,
   open,
   returnFocusRef,
   title,
 }: DialogProps) {
   return (
-    <DialogPrimitive.Root onOpenChange={onOpenChange} open={open}>
+    <DialogPrimitive.Root
+      onOpenChange={(nextOpen) => {
+        if (nextOpen || !closeDisabled) onOpenChange(nextOpen);
+      }}
+      open={open}
+    >
       <DialogPrimitive.Portal>
         <DialogPrimitive.Overlay className="dialog-overlay">
           <DialogPrimitive.Content
             aria-describedby={undefined}
             className="dialog-content"
+            onEscapeKeyDown={(event) => {
+              if (closeDisabled) event.preventDefault();
+            }}
+            onInteractOutside={(event) => {
+              if (closeDisabled) event.preventDefault();
+            }}
             onCloseAutoFocus={(event) => {
               if (returnFocusRef?.current) {
                 event.preventDefault();
@@ -41,6 +54,7 @@ export function Dialog({
                 <button
                   aria-label="Закрыть"
                   className="dialog-close"
+                  disabled={closeDisabled}
                   type="button"
                 >
                   <X aria-hidden="true" size={16} />

@@ -123,21 +123,21 @@ Frontend должен обеспечивать:
 
 ## Files
 
-- [ ] Использовать `pica` для качественного resize JPEG/PNG.
-- [ ] Для GIF применить библиотеку, сохраняющую animation frames, frame delays и transparency.
+- [x] Использовать `pica` для качественного resize JPEG/PNG.
+- [x] Для GIF применить библиотеку, сохраняющую animation frames, frame delays и transparency.
 - [ ] Рассмотреть связку `gifuct-js` + `gifenc`.
-- [ ] Загружать GIF-библиотеки лениво только при выборе GIF.
-- [ ] Не превращать animated GIF в статичное изображение.
+- [x] Загружать GIF-библиотеки лениво только при выборе GIF.
+- [x] Не превращать animated GIF в статичное изображение.
 - [ ] Использовать DOMPurify для дополнительной frontend-санитизации HTML сообщения.
 - [ ] Backend остаётся окончательным источником истины для file и message validation.
 
 ## WebSocket
 
-- [ ] Использовать `socket.io-client`.
-- [ ] Создавать singleton connection на namespace.
-- [ ] Не создавать новое соединение при каждом render.
-- [ ] Корректно восстанавливать subscriptions после reconnect.
-- [ ] Удалять listeners при unmount.
+- [x] Использовать `socket.io-client`.
+- [x] Создавать singleton connection на namespace.
+- [x] Не создавать новое соединение при каждом render.
+- [x] Корректно восстанавливать subscriptions после reconnect.
+- [x] Удалять listeners при unmount.
 
 ## Verification
 
@@ -196,9 +196,9 @@ Frontend должен обеспечивать:
 
 ## User contract
 
-- [ ] Регистрация принимает `email`, `password`, `avatarFileId`.
-- [ ] Avatar при регистрации обязателен.
-- [ ] `/api/users/me` содержит `id`, login email и `avatarUrl`.
+- [x] Регистрация принимает `email`, `password`, `avatarFileId`.
+- [x] Avatar при регистрации обязателен.
+- [x] `/api/users/me` содержит `id`, login email и `avatarUrl`.
 - [ ] User больше не содержит `userName` и `homePage`.
 
 ## Post contract
@@ -246,11 +246,11 @@ Frontend должен обеспечивать:
 - [ ] Дополнительно проверять расширение, MIME и размер в коде.
 - [ ] Передавать файл напрямую в S3/LocalStack по Presigned POST.
 - [ ] Не передавать бинарный файл через Gateway.
-- [ ] Подписываться на `files.subscribe` до начала Presigned POST upload.
-- [ ] Дожидаться `files.subscribed`.
-- [ ] После подписки выполнять загрузку.
-- [ ] Считать файл готовым после `files.uploaded`.
-- [ ] Не использовать `fileId` в Registration/Post до подтверждения.
+- [x] Подписываться на `files.subscribe` до начала Presigned POST upload.
+- [x] Дожидаться `files.subscribed`.
+- [x] После подписки выполнять загрузку.
+- [x] Считать файл готовым после `files.uploaded`.
+- [x] Не использовать `fileId` в Registration/Post до подтверждения.
 - [ ] Backend sync-проверка остаётся окончательной защитой от race condition.
 - [ ] Не реализовывать polling статуса файла при существующем WebSocket flow.
 
@@ -416,8 +416,9 @@ Frontend должен обеспечивать:
   - `Login`;
   - `Register`;
   - `Log Out`.
-- [ ] Для анонимного пользователя активны Login/Register.
+- [x] Для анонимного пользователя активны Login/Register.
 - [x] Для авторизованного пользователя активен Log Out.
+- [x] Показывать постоянный Session indicator: anonymous SVG, restoring placeholder или authenticated avatar с fallback.
 - [ ] Не выполнять невалидные действия скрытыми обработчиками.
 - [ ] `Create Message` требует авторизацию.
 - [ ] Если анонимный пользователь нажал Create Message, открыть Login modal и показать понятное уведомление.
@@ -681,77 +682,107 @@ Frontend должен обеспечивать:
 
 - [ ] Создать общую file schema.
 - [ ] Разрешить только JPG/JPEG, PNG, GIF, TXT.
-- [ ] Проверять extension и MIME.
-- [ ] Отвергать empty file.
-- [ ] Итоговый файл перед upload не должен превышать `102400` bytes.
+- [x] Проверять extension и MIME для avatar images.
+- [x] Отвергать empty file.
+- [x] Итоговый файл перед upload не должен превышать `102400` bytes.
 - [ ] TXT больше лимита отклонять без обрезания.
-- [ ] Изображения больше `320x240` уменьшать с сохранением пропорций.
-- [ ] Никогда не растягивать маленькое изображение.
-- [ ] Не выполнять crop.
-- [ ] Не менять пропорции.
-- [ ] Сохранять исходный формат, если это технически возможно.
-- [ ] Не скрывать неуспешную обработку.
+- [x] Изображения больше `320x240` уменьшать с сохранением пропорций.
+- [x] Никогда не растягивать маленькое изображение.
+- [x] Не выполнять crop.
+- [x] Не менять пропорции.
+- [x] Сохранять исходный формат, если это технически возможно.
+- [x] Не скрывать неуспешную обработку.
 
 ## JPEG/PNG
 
-- [ ] Читать dimensions до обработки.
-- [ ] Вычислять bounding box максимум `320x240`.
-- [ ] Использовать Pica.
-- [ ] После resize проверить итоговый размер.
-- [ ] При необходимости применять контролируемое quality reduction.
-- [ ] Не удалять PNG transparency.
-- [ ] Если невозможно получить файл до 100 KiB без неприемлемой потери/смены формата, показать ошибку.
+- [x] Читать dimensions до обработки.
+- [x] Вычислять bounding box максимум `320x240`.
+- [x] Использовать Pica.
+- [x] После resize проверить итоговый размер.
+- [x] При необходимости применять контролируемое quality reduction.
+- [x] Не удалять PNG transparency.
+- [x] Если невозможно получить файл до 100 KiB без неприемлемой потери/смены формата, показать ошибку.
 
 ## GIF
 
-- [ ] Определять animated GIF.
-- [ ] Сохранять все animation frames.
-- [ ] Сохранять frame delay.
-- [ ] Сохранять loop information.
-- [ ] Сохранять transparency.
-- [ ] Масштабировать каждый frame в одинаковый bounding box.
-- [ ] Не превращать GIF в статичный кадр.
+- [x] Определять animated GIF.
+- [x] Сохранять все animation frames.
+- [x] Сохранять frame delay.
+- [x] Сохранять loop information.
+- [x] Сохранять transparency.
+- [x] Масштабировать каждый frame в одинаковый bounding box.
+- [x] Не превращать GIF в статичный кадр.
 - [ ] Выполнять тяжёлую обработку вне основного UI-потока, если измерения показывают заметную блокировку.
-- [ ] Лениво загружать GIF-processing bundle.
-- [ ] Проверить animated GIF runtime-тестом.
+- [x] Лениво загружать GIF-processing bundle.
+- [ ] PARTIAL — animated GIF pipeline реализован, но browser runtime-проверка недоступна без in-app browser session.
 
 ## Preview
 
-- [ ] Для image создавать preview через object URL.
-- [ ] Освобождать object URL через `URL.revokeObjectURL`.
-- [ ] Показывать filename, type, dimensions и size.
+- [x] Для image создавать preview через object URL.
+- [x] Освобождать object URL через `URL.revokeObjectURL`.
+- [x] Показывать filename, type, dimensions и size.
 - [ ] Для TXT читать содержимое через File API.
 - [ ] Рендерить TXT только как plain text.
 - [ ] Использовать `white-space: pre-wrap`.
 - [ ] Никогда не интерпретировать TXT как HTML.
-- [ ] Красиво показывать состояние готового файла.
-- [ ] Позволить заменить выбранный файл до submit.
-- [ ] Позволить удалить выбранный файл из формы.
+- [x] Красиво показывать состояние готового файла.
+- [x] Позволить заменить выбранный файл до submit.
+- [x] Позволить удалить выбранный файл из формы.
 
 ---
 
 # 16. Presigned upload and Files WebSocket
 
-- [ ] Создать singleton Socket.IO client для `/files`.
-- [ ] Запросить upload request у Gateway.
-- [ ] Получить fileId, uploadUrl и uploadFields.
-- [ ] Отправить `files.subscribe` с fileId.
-- [ ] Дождаться `files.subscribed`.
-- [ ] Только после подтверждения комнаты выполнить Presigned POST.
-- [ ] Сформировать FormData из uploadFields.
-- [ ] Добавить File в FormData.
-- [ ] Не задавать multipart boundary вручную.
-- [ ] Проверить успешный S3 HTTP status.
-- [ ] После S3 success перейти в `awaitingConfirmation`.
-- [ ] Дождаться `files.uploaded` для соответствующего fileId.
-- [ ] Игнорировать уведомления других fileId.
-- [ ] После подтверждения сохранить fileId в конкретной форме.
-- [ ] После unmount убрать room listeners.
-- [ ] При reconnect повторно подписываться только на незавершённые uploads.
-- [ ] Добавить timeout UI без polling.
-- [ ] При timeout позволить пользователю повторить upload flow.
-- [ ] Не создавать несколько Post/User из-за повторного WebSocket события.
-- [ ] Проверить реальную загрузку через LocalStack.
+- [x] Browser runtime: Registration and avatar upload complete successfully with the corrected request-scoped WebSocket listener ordering.
+
+## Avatar upload and registration flow
+
+- [x] Request a Presigned POST and obtain `fileId`, upload URL and form fields.
+- [x] Register the request-scoped `files.uploaded` expectation for the exact `fileId` before subscribing or uploading to storage.
+- [x] Register the request-scoped `files.subscribed` listener before emitting `files.subscribe`.
+- [x] Emit `files.subscribe` for the exact `fileId`.
+- [x] Wait for the matching `files.subscribed` event before starting the storage upload.
+- [x] Upload the processed avatar through the Presigned POST.
+- [x] Preserve an early `files.uploaded` result if it arrives while the Presigned POST request is still pending.
+- [x] Start the processing timeout only for an unresolved upload expectation.
+- [x] Await the already-created `files.uploaded` expectation after the storage request succeeds.
+- [x] Continue registration only after the matching file reaches `UPLOADED`.
+- [x] Submit registration with the confirmed `avatarFileId`.
+- [x] Confirm successful registration and the File transition from `UPLOADED` to `USED`.
+- [x] Cancel request-scoped expectations on subscription, storage, reset or unmount failures.
+- [x] Remove only the listener and timeout owned by the completed request.
+- [x] Ignore foreign, malformed and duplicate WebSocket events.
+- [x] Keep one shared Socket.IO connection without creating a socket per upload.
+
+> **Critical ordering invariant:** To prevent upload events from being lost, the request-scoped `files.subscribed` listener must be registered before emitting `files.subscribe`, and the request-scoped `files.uploaded` listener must be registered before the Presigned POST begins. The backend may process the S3 object and emit `files.uploaded` while the browser is still awaiting the storage response. The expectation must therefore preserve an early event until the upload flow awaits its Promise.
+
+- [x] **Subscription race:** never emit `files.subscribe` before installing the matching `files.subscribed` listener.
+- [x] **Processing race:** never begin the Presigned POST before installing the matching `files.uploaded` listener.
+- [ ] Add durable File status reconciliation after WebSocket timeout or reconnect.
+  - WebSocket remains the primary realtime mechanism.
+  - Future reconciliation is a safety net for a genuinely lost at-most-once WebSocket frame and must not replace the normal WebSocket flow.
+  - A status endpoint, polling and retries are not implemented in the current slice.
+
+- [x] Создать singleton Socket.IO client для `/files`.
+- [x] Запросить upload request у Gateway.
+- [x] Получить fileId, uploadUrl и uploadFields.
+- [x] Отправить `files.subscribe` с fileId.
+- [x] Дождаться `files.subscribed`.
+- [x] Только после подтверждения комнаты выполнить Presigned POST.
+- [x] Сформировать FormData из uploadFields.
+- [x] Добавить File в FormData.
+- [x] Не задавать multipart boundary вручную.
+- [x] Проверить успешный S3 HTTP status.
+- [x] После S3 success перейти в `awaitingConfirmation`.
+- [x] Дождаться `files.uploaded` для соответствующего fileId.
+- [x] Игнорировать уведомления других fileId.
+- [x] После подтверждения сохранить fileId в конкретной форме.
+- [x] После unmount убрать room listeners.
+- [x] При reconnect повторно подписываться только на незавершённые uploads.
+- [x] Добавить timeout UI без polling.
+- [x] При timeout позволить пользователю повторить upload flow.
+- [x] Не создавать несколько Post/User из-за повторного WebSocket события.
+- [x] Проверить реальную загрузку через LocalStack.
 - [ ] Проверить browser CORS для Presigned POST/GET.
 - [ ] Если S3 CORS блокирует прямой browser flow, исправить минимальную bucket CORS-конфигурацию backend infrastructure; не создавать frontend binary proxy.
 
@@ -759,7 +790,7 @@ Frontend должен обеспечивать:
 
 # 17. Registration
 
-- [ ] Реализовать Register modal.
+- [x] Реализовать Register modal.
 - [ ] Поля:
   - email;
   - password;
@@ -767,17 +798,17 @@ Frontend должен обеспечивать:
 - [ ] Не добавлять userName.
 - [ ] Не добавлять homePage.
 - [ ] Не добавлять deviceId/deviceName.
-- [ ] Avatar обязателен.
-- [ ] Применить frontend file processing.
-- [ ] Дождаться `files.uploaded`.
-- [ ] После подтверждения отправить registration с avatarFileId.
-- [ ] Показать upload progress states.
-- [ ] После успешной регистрации показать toast.
-- [ ] Не выполнять автоматический login, если это отдельно не определено backend-контрактом.
-- [ ] Очистить form и file preview после success.
-- [ ] Обработать duplicate email.
-- [ ] Обработать invalid/used avatar.
-- [ ] Обработать backend unavailable.
+- [x] Avatar обязателен.
+- [x] Применить frontend file processing.
+- [x] Дождаться `files.uploaded`.
+- [x] После подтверждения отправить registration с avatarFileId.
+- [x] Показать upload progress states.
+- [x] После успешной регистрации показать toast.
+- [x] Не выполнять автоматический login, если это отдельно не определено backend-контрактом.
+- [x] Очистить form и file preview после success.
+- [x] Обработать duplicate email.
+- [x] Обработать invalid/used avatar.
+- [x] Обработать backend unavailable.
 
 ---
 
@@ -794,7 +825,7 @@ Frontend должен обеспечивать:
 - [ ] Logout должен очищать backend refresh cookie.
 - [ ] Logout должен очищать auth slice.
 - [ ] Login/Register кнопки не должны требовать лишних Session metadata.
-- [ ] Проверить login → refresh → reload → restore → logout flow.
+- [x] Проверить login → refresh → restore current user → logout flow через реальный backend integration.
 
 ---
 
@@ -1210,10 +1241,10 @@ Frontend должен обеспечивать:
 - [x] Открыть приложение в browser.
 - [x] Проверить Swagger type generation.
 - [ ] Проверить GraphQL type generation.
-- [ ] Зарегистрировать User с avatar.
-- [ ] Убедиться, что avatar обработан и подтверждён через WebSocket.
-- [ ] Выполнить login.
-- [ ] Перезагрузить страницу и восстановить Session.
+- [x] Зарегистрировать диагностического User с avatar через реальный backend integration.
+- [x] Убедиться, что Presigned POST подтверждён через `files.uploaded`.
+- [x] Выполнить login и `/users/me` через реальный backend integration.
+- [ ] PARTIAL — refresh и повторный `/users/me` проверены integration; browser reload недоступен без in-app browser session.
 - [ ] Создать root без attachment.
 - [ ] Создать root с image attachment.
 - [ ] Создать root с TXT attachment.
