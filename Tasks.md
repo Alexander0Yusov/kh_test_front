@@ -1413,3 +1413,26 @@ Frontend считается завершённым, когда:
 - [x] Short feeds without physical overflow retain wheel/touch/keyboard intent handling and a visible `Load more` fallback.
 - [x] Page Size is a single editable spinnerless numeric input with Enter/blur commit semantics.
 - [ ] PARTIAL: browser Network verification of the intent gate, persistence, and modal lifecycle.
+
+## Options Sidebar off-canvas invariants
+
+- [x] Sidebar panel uses a viewport-right off-canvas boundary independent of feed layout.
+- [x] Closed panel is translated by its complete width and leaves only a separate trigger visible.
+- [x] Closed content is `inert`, `aria-hidden`, and pointer-inactive.
+- [x] Trigger exposes `aria-controls`/`aria-expanded`; Escape closes and restores trigger focus.
+- [x] Panel transform does not resize header, feed, PostCard, or the document layout.
+- [ ] PARTIAL: browser verification of final pixels, Tab order, pointer blocking, and horizontal overflow.
+
+## Maintenance Erase All implementation status
+
+- [x] Maintenance feature and public header `Erase All` control.
+- [x] Warning confirmation content in the existing ModalHost.
+- [x] Typed public `DELETE /erase-all-data` without request body or auth requirement.
+- [x] Idle/erasing/failed state machine with duplicate-submit and close protection.
+- [x] Coordinated Session, Posts generation/cursor, realtime, upload, preview, form, and modal reset after HTTP 204.
+- [x] Current Options rules and versioned preferences remain preserved.
+- [x] Success/error toast UX without raw infrastructure details.
+- [x] Same-origin cross-tab reset notification without a second erase request or retransmission loop.
+- [x] Local runtime returned HTTP 204 with an empty body; the following GraphQL feed was empty and refresh returned 401.
+- [ ] PARTIAL: browser confirmation/focus/network inspection and post-reset Registration/Login smoke flow.
+- [ ] Remote-device erase synchronization is outside the current scope.

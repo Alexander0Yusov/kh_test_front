@@ -7,6 +7,7 @@ import type { CurrentUser } from "@/entities/session";
 import { AttachmentPreview } from "@/features/attachment-preview";
 import { CreatePostForm } from "@/features/create-post";
 import { LoginForm } from "@/features/login";
+import { EraseAllConfirmation } from "@/features/maintenance";
 import {
   AttachmentUploadField,
   AvatarUploadField,
@@ -22,7 +23,8 @@ interface ModalHostProps {
   attachmentPreviewUrl: string | null;
   client: RestClient;
   filesClient: FilesSocketClient;
-  modal: "attachmentPreview" | "createRootPost" | "login" | "postInteraction" | "register" | null;
+  eraseStatus: "erasing" | "failed" | "idle";
+  modal: "attachmentPreview" | "createRootPost" | "eraseAll" | "login" | "postInteraction" | "register" | null;
   onAuthenticated: (
     accessToken: string,
     currentUser: CurrentUser,
@@ -30,6 +32,7 @@ interface ModalHostProps {
   onClose: () => void;
   onCreatedPost: (post: PostViewModel) => void;
   onCreatedWithoutEnrichment: () => void;
+  onEraseAll: () => void;
   onUnauthorized: () => void;
   onOpenLogin: () => void;
   postInteractionPost: PostViewModel | null;
@@ -42,11 +45,13 @@ export function ModalHost({
   attachmentPreviewUrl,
   client,
   filesClient,
+  eraseStatus,
   modal,
   onAuthenticated,
   onClose,
   onCreatedPost,
   onCreatedWithoutEnrichment,
+  onEraseAll,
   onUnauthorized,
   onOpenLogin,
   postInteractionPost,
@@ -67,7 +72,9 @@ export function ModalHost({
   }, [modal, resetAttachment, resetAvatar]);
 
   const title =
-    modal === "postInteraction"
+    modal === "eraseAll"
+      ? "Erase All Data"
+      : modal === "postInteraction"
       ? "Read & Answer"
       : modal === "attachmentPreview"
       ? "Attachment Preview"
@@ -80,6 +87,7 @@ export function ModalHost({
   return (
     <Dialog
       closeDisabled={
+        (modal === "eraseAll" && eraseStatus === "erasing") ||
         (modal === "register" && registrationBusy) ||
         ((modal === "createRootPost" || modal === "postInteraction") && createPostBusy)
       }
@@ -92,6 +100,9 @@ export function ModalHost({
       returnFocusRef={returnFocusRef}
       title={title}
     >
+      {modal === "eraseAll" ? (
+        <EraseAllConfirmation onCancel={onClose} onConfirm={onEraseAll} status={eraseStatus} />
+      ) : null}
       {modal === "login" ? (
         <LoginForm client={client} onAuthenticated={onAuthenticated} onSuccess={onClose} />
       ) : null}

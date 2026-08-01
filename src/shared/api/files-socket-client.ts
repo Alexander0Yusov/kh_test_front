@@ -43,16 +43,17 @@ export class FilesSocketClient {
     this.#socket.connect();
   }
 
-  public disconnect(): void {
-    const error = new Error("Files connection closed.");
+  public cancelPending(reason = new Error("File operations cancelled.")): void {
     for (const cancellations of this.#subscriptionCancellations.values()) {
-      for (const cancel of cancellations) cancel(error);
+      for (const cancel of [...cancellations]) cancel(reason);
     }
-    this.#subscriptionCancellations.clear();
     for (const cancellations of this.#uploadCancellations.values()) {
-      for (const cancel of cancellations) cancel(error);
+      for (const cancel of [...cancellations]) cancel(reason);
     }
-    this.#uploadCancellations.clear();
+  }
+
+  public disconnect(): void {
+    this.cancelPending(new Error("Files connection closed."));
     this.#socket.off("connect", this.#resubscribe);
     this.#socket.disconnect();
   }

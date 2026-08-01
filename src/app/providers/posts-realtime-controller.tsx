@@ -51,7 +51,13 @@ export function PostsRealtimeController() {
     const removeCreatedListener = socketClient.onCreated(
       orchestrator.handleCreated,
     );
+    let resetEpoch = store.getState().resetEpoch;
     const unsubscribeStore = store.subscribe(() => {
+      const nextResetEpoch = store.getState().resetEpoch;
+      if (nextResetEpoch !== resetEpoch) {
+        resetEpoch = nextResetEpoch;
+        orchestrator.reset();
+      }
       orchestrator.flushBuffered();
     });
 

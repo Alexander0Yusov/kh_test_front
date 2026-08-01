@@ -34,6 +34,7 @@ export interface PostsRealtimeOrchestrator {
   dispose: () => void;
   flushBuffered: () => void;
   handleCreated: (event: PostsCreatedEvent) => void;
+  reset: () => void;
 }
 
 function isFeedReady(snapshot: RealtimePostsSnapshot): boolean {
@@ -174,5 +175,11 @@ export function createPostsRealtimeOrchestrator({
     },
     flushBuffered,
     handleCreated,
+    reset: () => {
+      bufferedEvents.clear();
+      seenEventIds.clear();
+      for (const controller of pendingRequests.values()) controller.abort();
+      pendingRequests.clear();
+    },
   };
 }

@@ -10,6 +10,7 @@ import {
 
 interface AuthTriggerRefs {
   createMessage: RefObject<HTMLButtonElement | null>;
+  eraseAll: RefObject<HTMLButtonElement | null>;
   login: RefObject<HTMLButtonElement | null>;
   register: RefObject<HTMLButtonElement | null>;
   returnFocus: RefObject<HTMLElement | null>;
@@ -28,12 +29,14 @@ export function LoginTriggerProvider({
   const loginTriggerRef = useRef<HTMLButtonElement>(null);
   const registerTriggerRef = useRef<HTMLButtonElement>(null);
   const createMessageTriggerRef = useRef<HTMLButtonElement>(null);
+  const eraseAllTriggerRef = useRef<HTMLButtonElement>(null);
   const returnFocusRef = useRef<HTMLElement>(null);
 
   return (
     <LoginTriggerContext.Provider
       value={{
         createMessage: createMessageTriggerRef,
+        eraseAll: eraseAllTriggerRef,
         login: loginTriggerRef,
         register: registerTriggerRef,
         returnFocus: returnFocusRef,
@@ -71,6 +74,12 @@ export function useCreateMessageTriggerRef(): RefObject<HTMLButtonElement | null
   const ref = use(LoginTriggerContext);
   if (!ref) throw new Error("LoginTriggerProvider is missing.");
   return ref.createMessage;
+}
+
+export function useEraseAllTriggerRef(): RefObject<HTMLButtonElement | null> {
+  const ref = use(LoginTriggerContext);
+  if (!ref) throw new Error("LoginTriggerProvider is missing.");
+  return ref.eraseAll;
 }
 
 export function useModalReturnFocus(): Pick<

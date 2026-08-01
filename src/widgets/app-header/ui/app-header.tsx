@@ -1,6 +1,6 @@
 "use client";
 
-import { LoaderCircle, UserRound } from "lucide-react";
+import { AlertTriangle, LoaderCircle, UserRound } from "lucide-react";
 import Image, { type ImageLoaderProps } from "next/image";
 import { type Ref, useState } from "react";
 
@@ -13,9 +13,12 @@ interface AppHeaderProps {
   client: RestClient;
   createMessageButtonRef: Ref<HTMLButtonElement>;
   currentUser: CurrentUser | null;
+  eraseAllButtonRef: Ref<HTMLButtonElement>;
+  eraseStatus: "erasing" | "failed" | "idle";
   loginButtonRef: Ref<HTMLButtonElement>;
   onAnonymous: () => void;
   onCreateMessage: () => void;
+  onEraseAll: () => void;
   onOpenLogin: () => void;
   onOpenRegister: () => void;
   registerButtonRef: Ref<HTMLButtonElement>;
@@ -26,9 +29,12 @@ export function AppHeader({
   client,
   createMessageButtonRef,
   currentUser,
+  eraseAllButtonRef,
+  eraseStatus,
   loginButtonRef,
   onAnonymous,
   onCreateMessage,
+  onEraseAll,
   onOpenLogin,
   onOpenRegister,
   registerButtonRef,
@@ -36,15 +42,20 @@ export function AppHeader({
 }: AppHeaderProps) {
   return (
     <header className="app-header">
-      <span className="app-logo">Test Task</span>
+      <div className="app-header-brand">
+        <span className="app-logo">Test Task</span>
+        <Button aria-label="Erase all project data" disabled={eraseStatus === "erasing"} onClick={onEraseAll} ref={eraseAllButtonRef}>
+          <AlertTriangle aria-hidden="true" size={16} /> Erase All
+        </Button>
+      </div>
       <Button
-        disabled={status === "idle" || status === "restoring"}
+        disabled={eraseStatus === "erasing" || status === "idle" || status === "restoring"}
         onClick={onCreateMessage}
         ref={createMessageButtonRef}
       >
         Create Message
       </Button>
-      <div className="app-header-actions">
+      <div className="app-header-actions" inert={eraseStatus === "erasing" ? true : undefined}>
         <div aria-hidden="true" className="session-indicator">
           {status === "authenticated" && currentUser ? (
             <SessionAvatar key={currentUser.avatarUrl} url={currentUser.avatarUrl} />

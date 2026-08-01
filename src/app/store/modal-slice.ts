@@ -1,6 +1,6 @@
 import type { StateCreator } from "zustand";
 
-export type ModalKind = "attachmentPreview" | "createRootPost" | "login" | "postInteraction" | "register" | null;
+export type ModalKind = "attachmentPreview" | "createRootPost" | "eraseAll" | "login" | "postInteraction" | "register" | null;
 
 export interface ModalSlice {
   closeModal: () => void;
@@ -10,6 +10,7 @@ export interface ModalSlice {
   openLogin: () => void;
   openAttachmentPreview: (postId: string) => void;
   openCreateRootPost: () => void;
+  openEraseAll: () => void;
   openPostInteraction: (postId: string) => void;
   openRegister: () => void;
 }
@@ -34,6 +35,9 @@ export const createModalSlice: StateCreator<
   },
   openCreateRootPost: () => {
     set({ attachmentPreviewPostId: null, modal: "createRootPost", postInteractionPostId: null });
+  },
+  openEraseAll: () => {
+    set({ attachmentPreviewPostId: null, modal: "eraseAll", postInteractionPostId: null });
   },
   openPostInteraction: (postId) => {
     set({ attachmentPreviewPostId: null, modal: "postInteraction", postInteractionPostId: postId });

@@ -6,6 +6,7 @@ import { AppToaster } from "@/shared/ui/toaster";
 
 import { StoreProvider } from "../store/store-provider";
 import { FilesClientProvider } from "./files-client-provider";
+import { ApplicationResetController } from "./application-reset-controller";
 import { LoginTriggerProvider } from "./login-trigger-provider";
 import { ModalHostController } from "./modal-host-controller";
 import { PostsRealtimeController } from "./posts-realtime-controller";
@@ -26,6 +27,7 @@ export function ApplicationProviders({
       <LoginTriggerProvider>
         <RuntimeClientProvider>
           <FilesClientProvider>
+            <ApplicationResetController />
             <PostsRealtimeController />
             <SessionBootstrap>{children}</SessionBootstrap>
             <ModalHostController />

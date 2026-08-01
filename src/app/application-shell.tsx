@@ -4,6 +4,7 @@ import { AppHeader } from "@/widgets/app-header";
 
 import {
   useCreateMessageTriggerRef,
+  useEraseAllTriggerRef,
   useLoginTriggerRef,
   useModalReturnFocus,
   useRegisterTriggerRef,
@@ -18,12 +19,16 @@ export function ApplicationShell() {
   const loginButtonRef = useLoginTriggerRef();
   const registerButtonRef = useRegisterTriggerRef();
   const createMessageButtonRef = useCreateMessageTriggerRef();
+  const eraseAllButtonRef = useEraseAllTriggerRef();
   const { setReturnFocus } = useModalReturnFocus();
   const clearSession = useAppStore((state) => state.clearSession);
   const openLogin = useAppStore((state) => state.openLogin);
   const openCreateRootPost = useAppStore((state) => state.openCreateRootPost);
   const openRegister = useAppStore((state) => state.openRegister);
   const currentUser = useAppStore((state) => state.currentUser);
+  const eraseStatus = useAppStore((state) => state.eraseStatus);
+  const openEraseAll = useAppStore((state) => state.openEraseAll);
+  const resetEraseStatus = useAppStore((state) => state.resetEraseStatus);
   const status = useAppStore((state) => state.status);
 
   return (
@@ -32,12 +37,19 @@ export function ApplicationShell() {
         client={client}
         createMessageButtonRef={createMessageButtonRef}
         currentUser={currentUser}
+        eraseAllButtonRef={eraseAllButtonRef}
+        eraseStatus={eraseStatus}
         loginButtonRef={loginButtonRef}
         onAnonymous={clearSession}
         onCreateMessage={() => {
           setReturnFocus(createMessageButtonRef.current);
           if (status === "authenticated") openCreateRootPost();
           else openLogin();
+        }}
+        onEraseAll={() => {
+          setReturnFocus(eraseAllButtonRef.current);
+          resetEraseStatus();
+          openEraseAll();
         }}
         onOpenLogin={() => {
           setReturnFocus(loginButtonRef.current);
