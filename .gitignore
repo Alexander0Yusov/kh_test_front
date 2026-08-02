@@ -35,6 +35,7 @@ pnpm-debug.log*
 
 # Keep environment examples
 !.env.example
+!.env.production.example
 
 # Operating systems
 .DS_Store

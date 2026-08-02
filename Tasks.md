@@ -1209,25 +1209,25 @@ Frontend должен обеспечивать:
 
 # 33. Docker
 
-- [ ] Создать multi-stage Dockerfile.
-- [ ] Использовать Next.js standalone output.
-- [ ] Запускать production server не от root.
-- [ ] Создать `.dockerignore`.
-- [ ] Добавить healthcheck.
-- [ ] Добавить frontend service в отдельный/соседний Compose project согласно структуре репозиториев.
-- [ ] Не копировать backend исходники во frontend image.
-- [ ] Передавать `BACKEND_URL` в runtime environment контейнера.
+- [x] Создать multi-stage Dockerfile.
+- [x] Использовать Next.js standalone output.
+- [x] Запускать production server не от root.
+- [x] Создать `.dockerignore`.
+- [x] Добавить healthcheck.
+- [x] Добавить frontend service в отдельный/соседний Compose project согласно структуре репозиториев.
+- [x] Не копировать backend исходники во frontend image.
+- [x] Передавать `BACKEND_URL` в runtime environment контейнера.
 - [x] Смена `BACKEND_URL` не должна требовать изменения frontend-кода.
 - [x] По возможности смена `BACKEND_URL` не должна требовать rebuild image.
 - [x] Browser должен получать публично достижимый backend URL через runtime config.
 - [x] Настроить frontend port.
 - [x] Документировать local start.
-- [ ] Документировать container start.
+- [x] Документировать container start.
 - [ ] Проверить взаимодействие frontend container → browser → Gateway.
 - [ ] Проверить WebSocket upgrade.
 - [ ] Проверить credentials/cookie flow.
 - [ ] Проверить backend CORS с точным frontend origin.
-- [ ] Не включать development tools в production image.
+- [x] Не включать development tools в production image.
 
 ---
 
@@ -1456,3 +1456,16 @@ Frontend считается завершённым, когда:
 - [x] Terminology consistently uses Login for the modal, Log In for the action, and Username in visible UI copy.
 - [x] Cyrillic audit of production `src` contains no frontend-authored system strings; generated contracts remain unchanged.
 - [ ] PARTIAL: browser verification of every modal/form/state and the accessibility tree is unavailable in the agent browser surface.
+
+## Production container foundation
+
+- [x] Build a multi-stage Next.js standalone image and run it as the non-root `node` user.
+- [x] Inject browser-reachable `BACKEND_URL` at container runtime without rebuilding the image.
+- [x] Add a Docker build CI check and immutable Git-SHA GHCR publishing workflow.
+- [x] Keep environment files, repository metadata, caches and dependencies outside the image context.
+- [ ] PARTIAL: production Compose integration is prepared in the backend repository; real DNS, TLS, cookie/CORS and WebSocket checks require the deployment host.
+- [x] Publish the prebuilt Next standalone image explicitly for `linux/amd64`; the VPS runs only `node server.js`.
+- [x] Publish same-repository PR candidate images and main images only after successful exact-SHA Frontend CI.
+- [x] Keep the frontend repository free of VPS/SSH deployment secrets; the backend repository owns production orchestration.
+- [x] Support backend-side candidate resolution by frontend PR number; frontend does not accept or transmit deployment SHAs.
+- [ ] PARTIAL: candidate/final frontend deployment is prepared but requires the backend production Environment and real VPS.
