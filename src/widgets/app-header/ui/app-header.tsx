@@ -9,6 +9,8 @@ import { LogoutButton } from "@/features/logout";
 import type { RestClient } from "@/shared/api";
 import { Button } from "@/shared/ui/button";
 
+type SeedStatus = "creating" | "failed" | "idle"; // ← ДОБАВЛЕНО
+
 interface AppHeaderProps {
   client: RestClient;
   createMessageButtonRef: Ref<HTMLButtonElement>;
@@ -18,10 +20,12 @@ interface AppHeaderProps {
   loginButtonRef: Ref<HTMLButtonElement>;
   onAnonymous: () => void;
   onCreateMessage: () => void;
+  onCreateSeeds: () => void; // ← ДОБАВЛЕНО
   onEraseAll: () => void;
   onOpenLogin: () => void;
   onOpenRegister: () => void;
   registerButtonRef: Ref<HTMLButtonElement>;
+  seedStatus: SeedStatus; // ← ДОБАВЛЕНО
   status: SessionStatus;
 }
 
@@ -34,31 +38,72 @@ export function AppHeader({
   loginButtonRef,
   onAnonymous,
   onCreateMessage,
+  onCreateSeeds, // ← ДОБАВЛЕНО
   onEraseAll,
   onOpenLogin,
   onOpenRegister,
   registerButtonRef,
+  seedStatus, // ← ДОБАВЛЕНО
   status,
 }: AppHeaderProps) {
   return (
     <header className="app-header">
       <div className="app-header-brand">
         <span className="app-logo">Test Task</span>
-        <Button aria-label="Erase all project data" disabled={eraseStatus === "erasing"} onClick={onEraseAll} ref={eraseAllButtonRef}>
+        <Button
+          aria-label="Erase all project data"
+          disabled={eraseStatus === "erasing"}
+          onClick={onEraseAll}
+          ref={eraseAllButtonRef}
+        >
           <AlertTriangle aria-hidden="true" size={16} /> Erase All
+        </Button>
+        {/* ← ДОБАВЛЕНА ВСЯ КНОПКА SEEDS */}
+        <Button
+          aria-label="Create demonstration posts"
+          disabled={
+            status !== "authenticated" ||
+            eraseStatus === "erasing" ||
+            seedStatus === "creating"
+          }
+          onClick={onCreateSeeds}
+        >
+          {seedStatus === "creating" ? (
+            <>
+              <LoaderCircle
+                aria-hidden="true"
+                className="progress-icon"
+                size={16}
+              />
+              Creating Seeds
+            </>
+          ) : (
+            "Seeds"
+          )}
         </Button>
       </div>
       <Button
-        disabled={eraseStatus === "erasing" || status === "idle" || status === "restoring"}
+        disabled={
+          eraseStatus === "erasing" ||
+          seedStatus === "creating" || // ← ДОБАВЛЕНО
+          status === "idle" ||
+          status === "restoring"
+        }
         onClick={onCreateMessage}
         ref={createMessageButtonRef}
       >
         Create Message
       </Button>
-      <div className="app-header-actions" inert={eraseStatus === "erasing" ? true : undefined}>
+      <div
+        className="app-header-actions"
+        inert={eraseStatus === "erasing" ? true : undefined}
+      >
         <div aria-hidden="true" className="session-indicator">
           {status === "authenticated" && currentUser ? (
-            <SessionAvatar key={currentUser.avatarUrl} url={currentUser.avatarUrl} />
+            <SessionAvatar
+              key={currentUser.avatarUrl}
+              url={currentUser.avatarUrl}
+            />
           ) : status === "idle" || status === "restoring" ? (
             <LoaderCircle className="progress-icon" size={16} />
           ) : (
@@ -74,7 +119,9 @@ export function AppHeader({
           </Button>
         ) : null}
         {status === "anonymous" || status === "error" ? (
-          <Button onClick={onOpenRegister} ref={registerButtonRef}>Register</Button>
+          <Button onClick={onOpenRegister} ref={registerButtonRef}>
+            Register
+          </Button>
         ) : null}
         {status === "idle" || status === "restoring" ? (
           <Button aria-label="Restoring session" disabled>
@@ -96,7 +143,16 @@ function SessionAvatar({ url }: { url: string }) {
   return failed ? (
     <UserRound size={18} />
   ) : (
-    <Image alt="" className="session-avatar" height={32} loader={passthroughImageLoader} onError={() => setFailed(true)} src={url} unoptimized width={32} />
+    <Image
+      alt=""
+      className="session-avatar"
+      height={32}
+      loader={passthroughImageLoader}
+      onError={() => setFailed(true)}
+      src={url}
+      unoptimized
+      width={32}
+    />
   );
 }
 
