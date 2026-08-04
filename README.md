@@ -1,53 +1,527 @@
-# Test Task frontend
+# DzenCode Test Task — Frontend
 
-Минимальный frontend-фундамент на Next.js App Router для дальнейшей разработки тестового приложения.
+> Клиентская часть SPA-приложения с каскадными сообщениями, сортировкой, cursor-based пагинацией, CAPTCHA, вложениями и обновлениями в реальном времени.
+>
+> Интерфейс построен так, чтобы не только показать готовый пользовательский сценарий, но и наглядно продемонстрировать работу backend-архитектуры: дерево сообщений, realtime-вставку новых ответов, прямую загрузку файлов и устойчивую работу с сессией.
 
-## Требования
+## Быстрый локальный запуск
 
-- Node.js 20.9 или новее
-- pnpm 10.13.1
+### Что потребуется
 
-## Запуск
+- **Node.js 20.9+**;
+- **pnpm 10.13.1**;
+- запущенный backend на `http://localhost:3000/api`.
+
+Backend-репозиторий:
+
+<https://github.com/Alexander0Yusov/kh_test>
+
+### 1. Клонировать frontend-репозиторий
+
+```bash
+git clone https://github.com/Alexander0Yusov/kh_test_front.git
+cd kh_test_front
+```
+
+### 2. Подготовить локальную конфигурацию
+
+В репозитории есть файл `.env.example`. Переименуйте его в `.env`.
+
+В нём должен быть указан локальный адрес backend:
+
+```env
+BACKEND_URL=http://localhost:3000/api
+```
+
+### 3. Установить зависимости
+
+```bash
+pnpm install
+```
+
+### 4. Запустить frontend
+
+```bash
+pnpm dev
+```
+
+Открыть в браузере:
+
+```text
+http://localhost:4200
+```
+
+Swagger backend:
+
+```text
+http://localhost:3000/api/docs
+```
+
+---
+
+## Live demo
+
+- Приложение: <https://dzencode.nymbi.org>
+- Swagger: <https://api-dzencode.nymbi.org/api/docs>
+
+---
+
+## Основной пользовательский сценарий
+
+1. Зарегистрироваться.
+2. Войти в систему.
+3. Создать корневое сообщение.
+4. Ответить на уже существующее сообщение.
+5. Добавить опциональное вложение.
+6. Проверить сортировку по дате, имени пользователя и email.
+7. Загрузить следующую страницу через кнопку или infinite scroll.
+8. Открыть приложение в двух вкладках и проверить realtime-вставку новых сообщений.
+9. Использовать `Seeds` для быстрого наполнения ленты.
+10. Использовать `Erase All` для возврата приложения в чистое состояние.
+
+---
+
+## Кнопки и элементы интерфейса
+
+### Register
+
+Открывает форму регистрации.
+
+Для регистрации обязательны:
+
+- email;
+- пароль;
+- avatar.
+
+После успешной регистрации пользователь сохраняется в backend-базе данных.
+
+### Log In
+
+Открывает форму входа.
+
+После успешного входа:
+
+- access token сохраняется в памяти Zustand;
+- refresh token устанавливается backend в `HttpOnly` cookie;
+- загружается текущий пользователь;
+- интерфейс переходит в авторизованное состояние.
+
+### Log Out
+
+Завершает текущую сессию.
+
+Backend помечает session как отозванную, frontend очищает access token и данные текущего пользователя.
+
+### Create Message
+
+Открывает форму создания корневого сообщения.
+
+Обязательные поля:
+
+- `User Name`;
+- `E-mail`;
+- `CAPTCHA`;
+- `Text`.
+
+Необязательные поля:
+
+- `Home page`;
+- attachment.
+
+Создание сообщения доступно только авторизованному пользователю.
+
+### Reply / открытие сообщения
+
+Клик по карточке открывает окно просмотра сообщения.
+
+Авторизованный пользователь может создать ответ. Ответ получает `parentId`, сохраняется в существующее дерево и появляется на нужной позиции.
+
+### Seeds
+
+Создаёт 60 демонстрационных корневых сообщений от имени текущего авторизованного пользователя.
+
+Набор построен так, чтобы удобно проверять:
+
+- несколько страниц;
+- сортировку;
+- три группы username;
+- три группы email;
+- различие сортировки по username и email.
+
+Создаётся:
+
+```text
+25 + 25 + 10
+```
+
+то есть две полные страницы и одна неполная.
+
+Повторное нажатие создаёт ещё один набор сообщений.
+
+### Erase All
+
+Демонстрационная кнопка полной очистки приложения.
+
+Она удаляет пользовательские данные, сообщения, сессии, файловые записи, S3-объекты и CAPTCHA-состояние.
+
+После успешного выполнения frontend сбрасывает локальное состояние и возвращается к анонимному пустому приложению.
+
+### Refresh CAPTCHA
+
+Запрашивает новый CAPTCHA challenge.
+
+Старая CAPTCHA после проверки или обновления больше не должна использоваться.
+
+### Сортировка
+
+Корневые сообщения можно сортировать по:
+
+- дате создания;
+- username;
+- email.
+
+Направления:
+
+- ascending;
+- descending.
+
+Сортировка применяется только к корневым сообщениям. Ответы сохраняют порядок внутри своего дерева.
+
+### Load more / infinite scroll
+
+По умолчанию загружается 25 корневых сообщений.
+
+Следующая страница может быть загружена автоматически при достижении нижней части ленты или вручную.
+
+Максимальный разрешённый limit backend — 50.
+
+### Attachment preview
+
+Открывает вложение сообщения в отдельном preview-интерфейсе.
+
+Публичная ссылка на файл временная и генерируется backend.
+
+---
+
+## Runtime configuration
+
+Frontend не встраивает адрес API напрямую в клиентский bundle на этапе сборки.
+
+При запуске браузер выполняет:
+
+```text
+GET /api/runtime-config
+```
+
+Next.js server возвращает:
+
+```json
+{
+  "backendUrl": "http://localhost:3000/api"
+}
+```
+
+После этого frontend создаёт REST client, GraphQL client и Socket.IO clients.
+
+Преимущество подхода: один и тот же Docker image можно запускать в разных окружениях, передавая новый `BACKEND_URL` при старте контейнера.
+
+---
+
+## Какие транспорты использует frontend
+
+| Транспорт | Назначение |
+|---|---|
+| REST | auth, создание сообщений, файлы, maintenance |
+| GraphQL | загрузка ленты и отдельного сообщения |
+| Socket.IO `/posts` | realtime-события новых сообщений |
+| Socket.IO `/files` | подтверждение обработки загруженного файла |
+
+---
+
+## Как хранится лента
+
+Состояние сообщений хранится в Zustand в нормализованном виде:
+
+```text
+postsById
+rootIds
+```
+
+Это позволяет быстро находить пост по `id`, не копировать данные во вложенных структурах и точечно добавлять realtime-сообщения.
+
+---
+
+## Как frontend строит дерево
+
+Backend возвращает сообщения с `parentId`, `rootId` и `path`.
+
+Frontend:
+
+1. проходит по всем сообщениям;
+2. строит индекс `childIdsByParent`;
+3. сортирует детей по `path`;
+4. выполняет итеративный depth-first обход через собственный stack;
+5. создаёт плоский список строк `{ depth, post }`.
+
+`depth` используется интерфейсом для визуального отступа ответа.
+
+Рекурсивные вызовы JavaScript не используются. Даже глубокое дерево обходится циклом и собственным стеком.
+
+---
+
+## Realtime-вставка новых сообщений
+
+Gateway отправляет событие `posts.created`.
+
+Frontend не вставляет этот payload напрямую. Realtime orchestrator:
+
+1. проверяет, относится ли новый пост к текущей странице;
+2. проверяет, загружены ли root и parent;
+3. при необходимости сравнивает новый root с границей текущей сортировки;
+4. загружает полную модель через REST;
+5. добавляет её через `upsertPost`;
+6. перестраивает визуальный список дерева.
+
+Если новый root не относится к текущей странице, он игнорируется.
+
+Если данных для точного сравнения недостаточно, frontend показывает `New message available` и предлагает обновить ленту.
+
+События, пришедшие до окончания начальной загрузки, временно буферизуются.
+
+---
+
+## Загрузка файлов
+
+Frontend не отправляет бинарный файл через Gateway.
+
+Цепочка выглядит так:
+
+```text
+Frontend
+→ получает Presigned POST
+→ подписывается на file:<fileId>
+→ загружает файл напрямую в S3
+→ ожидает files.uploaded
+→ продолжает создание сущности
+```
+
+### Почему используется комната `file:<fileId>`
+
+Перед загрузкой клиент подписывается на отдельную Socket.IO-комнату конкретного файла.
+
+Подтверждение обработки получает только тот клиент, который ждёт этот файл.
+
+Реализованы подтверждение подписки, переподписка после reconnect, ожидание `files.uploaded`, таймауты и отмена незавершённых операций.
+
+---
+
+## Вложения
+
+Поддерживаются форматы:
+
+```text
+JPG
+PNG
+GIF
+TXT
+```
+
+Текстовый файл ограничен размером 100 КБ.
+
+Frontend подготавливает загрузку, но окончательная проверка выполняется backend: фактический размер, реальное содержимое, соответствие расширению, валидность изображения и корректный UTF-8 для TXT.
+
+Вложение к сообщению необязательно. Avatar при регистрации обязателен.
+
+---
+
+## CAPTCHA
+
+Frontend получает от backend `captchaId` и `image`.
+
+Изображение отображается как `data:image/png;base64`.
+
+При отправке формы frontend передаёт `captchaId` и `captchaValue`. Проверку выполняет backend через Redis.
+
+CAPTCHA одноразовая: после попытки проверки challenge потребляется.
+
+---
+
+## Разрешённый HTML
+
+В сообщениях разрешены:
+
+```text
+<a href="" title=""></a>
+<strong></strong>
+<i></i>
+<code></code>
+```
+
+Frontend использует DOMPurify.
+
+При вводе сообщение санитизируется и сравнивается с исходной строкой. Если строки отличаются, форма отклоняет сообщение.
+
+Текст ошибки:
+
+```text
+Message contains unsupported markup.
+Use only a[href,title], strong, i and code.
+```
+
+Перед выводом сообщение снова проходит DOMPurify, и только после этого используется `dangerouslySetInnerHTML`.
+
+---
+
+## Сессия и токены
+
+Access token хранится только в памяти Zustand и не записывается в `localStorage`.
+
+REST middleware автоматически добавляет:
+
+```http
+Authorization: Bearer <accessToken>
+```
+
+Refresh token хранится в `HttpOnly` cookie.
+
+REST client использует:
+
+```ts
+credentials: "include"
+```
+
+поэтому браузер автоматически отправляет cookie backend.
+
+---
+
+## Защита от устаревших запросов
+
+При загрузке ленты используется `generation`.
+
+Когда меняется сортировка, выполняется reload или начинается новая начальная загрузка, generation увеличивается. Ответ старого запроса игнорируется, если он относится к предыдущему generation.
+
+Также используются `AbortController`, `loadingCursor` и проверка текущего cursor, чтобы параллельные запросы не записали страницы в неправильном порядке.
+
+---
+
+## Основные команды
+
+### Development
+
+```bash
+pnpm dev
+```
+
+Запускает Next.js на порту `4200`.
+
+### Production build
+
+```bash
+pnpm build
+```
+
+### Production start
+
+```bash
+pnpm start
+```
+
+### Lint
+
+```bash
+pnpm lint
+```
+
+### TypeScript check
+
+```bash
+pnpm typecheck
+```
+
+### Обновление OpenAPI-контрактов
+
+Backend должен быть запущен и Swagger должен быть доступен.
+
+```bash
+pnpm contracts:openapi
+```
+
+### Обновление GraphQL-контрактов
+
+Backend должен быть запущен и GraphQL schema должна быть доступна.
+
+```bash
+pnpm contracts:graphql
+```
+
+---
+
+## Структура frontend
+
+```text
+src/
+  app/
+  entities/
+  features/
+  shared/
+  widgets/
+```
+
+- `app` — providers, controllers и сборка приложения;
+- `entities` — модели пользователя, session и post;
+- `features` — законченные пользовательские действия;
+- `shared` — API clients, runtime config и переиспользуемый UI;
+- `widgets` — крупные визуальные блоки страницы.
+
+---
+
+## Технологии
+
+- Next.js 16
+- React 19
+- TypeScript 5
+- Zustand
+- React Hook Form
+- Zod
+- GraphQL Code Generator
+- OpenAPI TypeScript
+- openapi-fetch
+- Socket.IO Client
+- DOMPurify
+- Tailwind CSS
+- Radix UI
+- pnpm
+
+---
+
+## Проверка после чистого clone
+
+```bash
+git clone https://github.com/Alexander0Yusov/kh_test_front.git
+cd kh_test_front
+```
+
+Переименовать:
+
+```text
+.env.example → .env
+```
+
+Затем:
 
 ```bash
 pnpm install
 pnpm dev
 ```
 
-Frontend будет доступен по адресу `http://localhost:4200`. Для генерации
-REST-контрактов backend API должен быть доступен по адресу
-`http://localhost:3000/api`.
+Открыть:
 
-## REST-контракты и проверки
-
-```bash
-pnpm contracts:openapi
-pnpm typecheck
-pnpm lint
-pnpm build
-pnpm start
+```text
+http://localhost:4200
 ```
 
-`BACKEND_URL` задаёт публичный base URL backend API. Значение читается сервером
-во время выполнения и публикуется для browser-кода только через
-`GET /api/runtime-config`. Локальный пример находится в `.env.example`;
-для разработки его можно скопировать в игнорируемый `.env.local`.
+Backend к этому моменту должен быть запущен на:
 
-`pnpm contracts:openapi` получает Swagger JSON из
-`${BACKEND_URL}/docs-json` и обновляет generated REST-контракты.
-
-## Production image ownership
-
-Frontend CI builds the Next standalone runtime and, after successful CI,
-publishes `ghcr.io/<namespace>/dzencode-frontend:<full-git-sha>` for
-`linux/amd64`. Same-repository pull requests publish candidate SHAs; pushes to
-main publish stable SHAs. Fork PRs never receive package-write capability.
-
-This repository does not own SSH, VPS credentials, Compose or production
-deployment. The backend repository is the trusted production control plane.
-Its `frontend frontend-pr=<number>` target resolves an open PR to its current
-head SHA or a merged PR to its merge SHA, validates exact-SHA Frontend CI and
-the immutable package, then deploys it. Candidate deployment before merge and
-final deployment after merge are separate explicit actions. A new PR commit
-requires new CI, image publication and deployment request; no manual SHA is
-accepted. The VPS only pulls this image and runs `node server.js`.
+```text
+http://localhost:3000/api
+```
